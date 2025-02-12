@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstan
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightFrontMotorName;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightRearMotorName;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Intake.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.Stage1.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
-
+@Disabled
 @TeleOp(name="Drive", group = "Drive")
 public class Drive extends LinearOpMode {
 
