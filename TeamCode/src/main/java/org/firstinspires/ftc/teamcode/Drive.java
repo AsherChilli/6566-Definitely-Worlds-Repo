@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Intake.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.Stage1.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 @Disabled
@@ -68,7 +68,7 @@ public class Drive extends LinearOpMode {
         //hMap, name of servo used for claw
         ClawSubsystem clawSubsystem = new ClawSubsystem(hardwareMap, "clawAngle", "clawDriver", "clawWrist");
         //hMap, name of motor used to change the EXTENSION HEIGHT of the arm/slides
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
+        Stage1Subsystem stage1Subsystem = new Stage1Subsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
 //        armPIDFCommand armPIDFCommand = new armPIDFCommand(armSubsystem, 0,0 );
 
 
@@ -131,23 +131,23 @@ public class Drive extends LinearOpMode {
             // Telemetry
             // ----------------------------
 
-            telemetry.addData("Current Angle in Ticks: ", ArmSubsystem.getAnglePos());
+            telemetry.addData("Current Angle in Ticks: ", Stage1Subsystem.getAnglePos());
             telemetry.addData("Current Angle Target in Ticks: ", angleTarget);
 
 
-            telemetry.addData("Current Extension in Ticks: ", ArmSubsystem.getExtenderPos());
+            telemetry.addData("Current Extension in Ticks: ", Stage1Subsystem.getExtenderPos());
             telemetry.addData("Current Extension Target in Ticks: ", extendTarget);
 
 
 
-            telemetry.addData("Arm Angle: ", ArmSubsystem.getAnglePosDEG());
-            telemetry.addData("Arm extension: ", ArmSubsystem.getExtenderPosIN());
+            telemetry.addData("Arm Angle: ", Stage1Subsystem.getAnglePosDEG());
+            telemetry.addData("Arm extension: ", Stage1Subsystem.getExtenderPosIN());
 
-            telemetry.addData("Arm subsystem Angle Target:", ArmSubsystem.getAngleTarget());
-            telemetry.addData("Arm subsystem Extension Target:", ArmSubsystem.getExtTarget());
+            telemetry.addData("Arm subsystem Angle Target:", Stage1Subsystem.getAngleTarget());
+            telemetry.addData("Arm subsystem Extension Target:", Stage1Subsystem.getExtTarget());
 
-            telemetry.addData("X: ", ArmSubsystem.getX());
-            telemetry.addData("Y: ", ArmSubsystem.getY());
+            telemetry.addData("X: ", Stage1Subsystem.getX());
+            telemetry.addData("Y: ", Stage1Subsystem.getY());
 
             telemetry.addData("Claw Wrist: ", ClawSubsystem.angleOfClaw.getPosition());
 
@@ -179,8 +179,8 @@ public class Drive extends LinearOpMode {
 
 
     private void update() {
-        ArmSubsystem.update(angleTarget,extendTarget);
-        clawZ = Math.max(ArmSubsystem.getExtenderPos() < 30 ? 0.4: 0, Math.min(1, clawZ));
+        Stage1Subsystem.update(angleTarget,extendTarget);
+        clawZ = Math.max(Stage1Subsystem.getExtenderPos() < 30 ? 0.4: 0, Math.min(1, clawZ));
         clawX = Math.max(0, Math.min(1, clawX));
 
         ClawSubsystem.setAnglePosition(clawZ);
@@ -188,33 +188,7 @@ public class Drive extends LinearOpMode {
         follower.updatePose();
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
 
-        angleTarget = ArmSubsystem.getAngleTarget();
-        extendTarget = ArmSubsystem.getExtTarget();
-    }
-    private void highbasket() {
-        ArmSubsystem.setPos(46,90);
-        ClawSubsystem.setAnglePosition(0.5);
-        ClawSubsystem.setWristPosition(0.5);
-        angleTarget = ArmSubsystem.getAngleTarget();
-        extendTarget = ArmSubsystem.getExtTarget();
-        ClawSubsystem.open();
-        ClawSubsystem.close();
-        ArmSubsystem.setPos(0, 0);
-        ClawSubsystem.setAnglePosition(0);
-        ClawSubsystem.setWristPosition(0);
-    }
-    private void highchamber() {
-        ArmSubsystem.setPos(0,45);
-        angleTarget = ArmSubsystem.getAngleTarget();
-        extendTarget = ArmSubsystem.getExtTarget();
-    }
-
-    private void picking() {
-        ArmSubsystem.setPos(22,0);
-        clawZ = 0;
-        ClawSubsystem.setWristPosition(0.5);
-        ClawSubsystem.open();
-        angleTarget = ArmSubsystem.getAngleTarget();
-        extendTarget = ArmSubsystem.getExtTarget();
+        angleTarget = Stage1Subsystem.getAngleTarget();
+        extendTarget = Stage1Subsystem.getExtTarget();
     }
 }

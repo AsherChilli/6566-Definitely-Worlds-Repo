@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Stage1.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 
 @Config
 @TeleOp
@@ -44,7 +44,7 @@ public class armSubclassTesting extends LinearOpMode {
         waitForStart();
 
 
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
+        Stage1Subsystem stage1Subsystem = new Stage1Subsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
         //armPIDFCommand armPIDFCommand = new armPIDFCommand(armSubsystem, 0, 0);
 
         //armSubsystem.setDefaultCommand(armPIDFCommand);
@@ -59,14 +59,14 @@ public class armSubclassTesting extends LinearOpMode {
 
 
 
-            telemetry.addData("Angle Ticks", armSubsystem.getAnglePos());
-            telemetry.addData("Angle Degrees", armSubsystem.getAnglePosDEG());
-            telemetry.addData("Extension Ticks", armSubsystem.getExtenderPos());
-            telemetry.addData("Extension Inches", armSubsystem.getExtenderPosIN());
+            telemetry.addData("Angle Ticks", stage1Subsystem.getAnglePos());
+            telemetry.addData("Angle Degrees", stage1Subsystem.getAnglePosDEG());
+            telemetry.addData("Extension Ticks", stage1Subsystem.getExtenderPos());
+            telemetry.addData("Extension Inches", stage1Subsystem.getExtenderPosIN());
 
 
-            telemetry.addData("Current REAL Angle Target", armSubsystem.getAngleTargetDG());
-            telemetry.addData("Current REAL Extend Target", armSubsystem.getExtTargetIN());
+            telemetry.addData("Current REAL Angle Target", stage1Subsystem.getAngleTargetDG());
+            telemetry.addData("Current REAL Extend Target", stage1Subsystem.getExtTargetIN());
 
             telemetry.addData("Current Set X: ",x );
             telemetry.addData("Current Set Y: ",y );

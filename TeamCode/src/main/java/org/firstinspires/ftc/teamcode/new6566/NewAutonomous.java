@@ -13,6 +13,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Autonomous(name="Simple Odometry Auto", group="Robot")
 public class NewAutonomous extends LinearOpMode {
@@ -49,6 +50,44 @@ public class NewAutonomous extends LinearOpMode {
     private static final double STRAFE_SPEED = 1;
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    private int stage2Status = 0;
+
+    private final int pickFromRack = 1000;
+
+    //Clip Vars
+    double holdOpenMax = .475;//.45
+    double holdClose = .35;//.3
+    double holdCloseTight = .3;//.2
+    boolean clipping = false;
+
+    private Timer stage2timer = new Timer();
+
+
+    private void setStage2(int status) {
+        stage2Status = status;
+        stage2timer.resetTimer();
+    }
+    private void stage2Updater() {
+        switch (stage2Status) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case pickFromRack:
+                ClipWrist.setPosition(.65);
+                ClipHold.setPosition(holdOpenMax);
+                ClipArm.setTargetPosition(1493);
+                ClipArm.setPower(.3);
+                ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (stage2timer.getElapsedTime() > 250) {
+                    setStage2(1001);
+                }
+                break;
+            case 1001:
+                break;
+        }
+    }
 
 
     private void moveToScoringPosition() {

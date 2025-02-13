@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Stage1;
+package org.firstinspires.ftc.teamcode.Stage2;
 
 
 
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class ArmSubsystem extends SubsystemBase {
+public class Stage2Subsystem extends SubsystemBase {
 
     //Motor used to change the angle of the arm
     private static DcMotorEx extenderMotorUp = null;
@@ -58,7 +58,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private static boolean isBusy = false;
 
-    public ArmSubsystem(final HardwareMap hMap){
+    public Stage2Subsystem(final HardwareMap hMap){
 
         extenderMotorUp = hMap.get(DcMotorEx.class, "armExtendUp");
         angleMotorLeft = hMap.get(DcMotorEx.class,  "armAngleLeft");
@@ -84,7 +84,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
 
-    public ArmSubsystem(final HardwareMap hmap, final String extensionLeft, final String extensionRight, final String angleUp, final String angleDown){
+    public Stage2Subsystem(final HardwareMap hmap, final String extensionLeft, final String extensionRight, final String angleUp, final String angleDown){
         extenderMotorUp = hmap.get(DcMotorEx.class, extensionLeft);
         angleMotorLeft = hmap.get(DcMotorEx.class, angleUp);
 
@@ -109,7 +109,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     }
 
-    public ArmSubsystem(final HardwareMap hmap, final String extensionUp, final String extensionDown, final String angleLeft, final String angleRight, final double pAngle, final double iAngle, final double dAngle, final double fAngle, final double pExtend, final double iExtend, final double dExtend){
+    public Stage2Subsystem(final HardwareMap hmap, final String extensionUp, final String extensionDown, final String angleLeft, final String angleRight, final double pAngle, final double iAngle, final double dAngle, final double fAngle, final double pExtend, final double iExtend, final double dExtend){
         extenderMotorUp = hmap.get(DcMotorEx.class, extensionUp);
         angleMotorLeft = hmap.get(DcMotorEx.class, angleLeft);
 

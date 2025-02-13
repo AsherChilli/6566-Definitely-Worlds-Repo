@@ -3,14 +3,11 @@ package org.firstinspires.ftc.teamcode.Stage1.Tuning;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Stage1.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 @Config
 @TeleOp
 public class ArmTuner extends LinearOpMode {
@@ -36,7 +33,7 @@ public class ArmTuner extends LinearOpMode {
         waitForStart();
 
 
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
+        Stage1Subsystem stage1Subsystem = new Stage1Subsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
 
 
 
@@ -44,28 +41,28 @@ public class ArmTuner extends LinearOpMode {
 
 
 
-            if (pAngle != ArmSubsystem.getAngleP() || iAngle != ArmSubsystem.getAngleI() || dAngle != ArmSubsystem.getAngleD() || fAngle != ArmSubsystem.getAngleFeedForward() || pExtend != ArmSubsystem.getExtendP() || iExtend != ArmSubsystem.getExtendI() || dExtend != ArmSubsystem.getExtendD()) {
-                ArmSubsystem.setAnglePID(pAngle, iAngle, dAngle);
-                ArmSubsystem.setExtendPID(pExtend, iExtend, dExtend);
+            if (pAngle != Stage1Subsystem.getAngleP() || iAngle != Stage1Subsystem.getAngleI() || dAngle != Stage1Subsystem.getAngleD() || fAngle != Stage1Subsystem.getAngleFeedForward() || pExtend != Stage1Subsystem.getExtendP() || iExtend != Stage1Subsystem.getExtendI() || dExtend != Stage1Subsystem.getExtendD()) {
+                Stage1Subsystem.setAnglePID(pAngle, iAngle, dAngle);
+                Stage1Subsystem.setExtendPID(pExtend, iExtend, dExtend);
             }
 
-            ArmSubsystem.setPos(new Vector2d(x,y));
-            telemetry.addData("isBusy?: ", ArmSubsystem.isBusy());
-            ArmSubsystem.update();
+            Stage1Subsystem.setPos(new Vector2d(x,y));
+            telemetry.addData("isBusy?: ", Stage1Subsystem.isBusy());
+            Stage1Subsystem.update();
 
 
-            telemetry.addData("Angle Ticks: ", ArmSubsystem.getAnglePos());
-            telemetry.addData("Angle Degrees: ", ArmSubsystem.getAnglePosDEG());
-            telemetry.addData("Extension Ticks: ", ArmSubsystem.getExtenderPos());
-            telemetry.addData("Extension Inches: ", ArmSubsystem.getExtenderPosIN());
+            telemetry.addData("Angle Ticks: ", Stage1Subsystem.getAnglePos());
+            telemetry.addData("Angle Degrees: ", Stage1Subsystem.getAnglePosDEG());
+            telemetry.addData("Extension Ticks: ", Stage1Subsystem.getExtenderPos());
+            telemetry.addData("Extension Inches: ", Stage1Subsystem.getExtenderPosIN());
 
-            telemetry.addData("Current REAL Angle Target", ArmSubsystem.getAngleTarget());
-            telemetry.addData("Current REAL Extend Target", ArmSubsystem.getExtTarget());
+            telemetry.addData("Current REAL Angle Target", Stage1Subsystem.getAngleTarget());
+            telemetry.addData("Current REAL Extend Target", Stage1Subsystem.getExtTarget());
 
             telemetry.addData("Current Set X: ",x );
             telemetry.addData("Current Set Y: ",y );
 
-            telemetry.addData("isBusy?:2", ArmSubsystem.isBusy());
+            telemetry.addData("isBusy?:2", Stage1Subsystem.isBusy());
 
 
 

@@ -4,13 +4,12 @@ package org.firstinspires.ftc.teamcode.Auton;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Intake.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.Stage1.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
@@ -28,7 +27,7 @@ public class pathingTestChamber extends OpMode {
     private Timer opmodeTimer, pathTimer, armTimer;
     private int pathState;
     private int armState;
-    ArmSubsystem armSubsystem;
+    Stage1Subsystem stage1Subsystem;
     ClawSubsystem clawSubsystem;
     CommandScheduler commandScheduler;
     Path tempPath;
@@ -87,49 +86,49 @@ public class pathingTestChamber extends OpMode {
             case -1:
                 ClawSubsystem.setWristPosition(0);
                 ClawSubsystem.open();
-                ArmSubsystem.setPos(18, 18);
-                if (!ArmSubsystem.isBusy()) {
+                Stage1Subsystem.setPos(18, 18);
+                if (!Stage1Subsystem.isBusy()) {
                     setArmState(-2);
                 }
                 break;
             case -2:
-                ArmSubsystem.setPos(16,8);
-                if (!ArmSubsystem.isBusy() && armTimer.getElapsedTime() > 200) {
+                Stage1Subsystem.setPos(16,8);
+                if (!Stage1Subsystem.isBusy() && armTimer.getElapsedTime() > 200) {
                     setArmState(-3);
                 }
                 break;
             case -3:
                 ClawSubsystem.close();
-                if (armTimer.getElapsedTime() > 200 && !ArmSubsystem.isBusy()) {
+                if (armTimer.getElapsedTime() > 200 && !Stage1Subsystem.isBusy()) {
                     setArmState(-4);
 
                 }
                 break;
             case -4:
-                ArmSubsystem.setPos(10,60);
-                if (!ArmSubsystem.isBusy()) {
+                Stage1Subsystem.setPos(10,60);
+                if (!Stage1Subsystem.isBusy()) {
                     setArmState(0);
                 }
                 break;
             //cases for scoring samples
             case 1:
                 ClawSubsystem.setWristPosition(0);
-                ArmSubsystem.setPos(50,100);
-                if (!ArmSubsystem.isBusy()) {
+                Stage1Subsystem.setPos(50,100);
+                if (!Stage1Subsystem.isBusy()) {
                     setArmState(2);
                 }
                 break;
             case 2:
                 ClawSubsystem.setWristPosition(0);
-                ArmSubsystem.setPos(50,110);
-                if (!ArmSubsystem.isBusy()) {
+                Stage1Subsystem.setPos(50,110);
+                if (!Stage1Subsystem.isBusy()) {
                     setArmState(3);
                 }
                 break;
             case 3:
                 ClawSubsystem.setWristPosition(1);
                 //ClawSubsystem.open();
-                if (!ArmSubsystem.isBusy() && armTimer.getElapsedTime() > 400) {
+                if (!Stage1Subsystem.isBusy() && armTimer.getElapsedTime() > 400) {
                     setArmState(4);
                 }
                 break;
@@ -137,7 +136,7 @@ public class pathingTestChamber extends OpMode {
                 setArmState(0);
                 ClawSubsystem.open();
                 ClawSubsystem.setWristPosition(0);
-                ArmSubsystem.setPos(10, 60);
+                Stage1Subsystem.setPos(10, 60);
                 break;
 
         }
@@ -297,7 +296,7 @@ public class pathingTestChamber extends OpMode {
         opmodeTimer = new Timer();
         armTimer = new Timer();
 
-        armSubsystem = new ArmSubsystem(hardwareMap);
+        stage1Subsystem = new Stage1Subsystem(hardwareMap);
         clawSubsystem = new ClawSubsystem(hardwareMap);
         commandScheduler = CommandScheduler.getInstance();
 
@@ -309,7 +308,7 @@ public class pathingTestChamber extends OpMode {
         follower.setStartingPose(autonPoses.startPoseBasket);
         follower.getPose().setHeading(autonPoses.startPoseBasket.getHeading());
         ClawSubsystem.setAnglePosition(1);
-        ArmSubsystem.setPos(2,30);
+        Stage1Subsystem.setPos(2,30);
 
 
         buildPaths();
@@ -319,7 +318,7 @@ public class pathingTestChamber extends OpMode {
     public void init_loop(){
         //Looped
         ClawSubsystem.close();
-        ArmSubsystem.update();
+        Stage1Subsystem.update();
         commandScheduler.run();
 
     }
@@ -330,9 +329,9 @@ public class pathingTestChamber extends OpMode {
         follower.update();
         autonomousPathUpdate();
         autonomousArmUpdate();
-        telemetry.addData("isBusy?", ArmSubsystem.isBusy());
-        ArmSubsystem.update();
-        telemetry.addData("isBusy?2", ArmSubsystem.isBusy());
+        telemetry.addData("isBusy?", Stage1Subsystem.isBusy());
+        Stage1Subsystem.update();
+        telemetry.addData("isBusy?2", Stage1Subsystem.isBusy());
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
