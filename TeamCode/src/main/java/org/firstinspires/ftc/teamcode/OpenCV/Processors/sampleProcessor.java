@@ -51,7 +51,7 @@ public class sampleProcessor implements VisionProcessor {
         NOT_FOUND
     }
 
-    enum Color {
+    public enum Color {
         RED,
         BLUE,
         YELLOW
