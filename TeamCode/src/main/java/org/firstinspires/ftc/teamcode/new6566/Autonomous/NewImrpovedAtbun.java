@@ -28,6 +28,8 @@ public class NewImrpovedAtbun extends OpMode {
 
     MultipleTelemetry telemetry;
 
+    int pathState = 0;
+
     //Class of sampleDetection
     sampleProcessor processor = new sampleProcessor();
 
@@ -89,14 +91,68 @@ public class NewImrpovedAtbun extends OpMode {
 
     }
 
-    void autonomousPathUpdate(int pathState){
+    void setState(int num){pathState = num;}
+
+    void autonomousPathUpdate(){
 
         switch (pathState){
 
             //Make robot go forward and
             case(1):
-                //do thin
+                /*
+                We have to:
+                Move to score the preload
+                Raise the arm to score
+                Some kind of score function
+                 */
+                setState(2);
+                break;
 
+            case(2):
+                /*
+                We have to:
+                Flip the arm to it's top position
+                Move to the preloadClip spot
+                Ensure cams are lowered (servos are powered to the low end)
+                 */
+                setState(3);
+                break;
+            case(3):
+                /*
+                We have to:
+                Move into the wall
+                Raise the cams (both of them please, all the way)
+                 */
+                setState(4);
+                break;
+            case(4):
+                /*
+                We have to:
+                Move to pickup the sample
+                Grab a clip in the clipClaw
+                Lower sampleClaw
+                Extend out slides
+                Close sampleClaw
+                Retract back in
+                Have claw(s) in their clipping position
+                 */
+                setState(5);
+                break;
+            case(5):
+                /*
+                We have to:
+                Clip the sample
+                Move to scoring position
+                Get arm into scoring position, while moving (efficiency!)
+                Score function epicness
+                 */
+                setState(-1);
+                break;
+            case(-1):
+                /*
+                We have to:
+                Make the thing cycle.
+                 */
 
         }
 
