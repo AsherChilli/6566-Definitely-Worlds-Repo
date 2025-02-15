@@ -8,11 +8,14 @@ import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+//import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stage1Subsystem extends SubsystemBase {
 
     private static DcMotorEx extenderMotorLeft = null;
     private static DcMotorEx extenderMotorRight = null;
+
+    private static Servo
 
 
 
@@ -40,6 +43,10 @@ public class Stage1Subsystem extends SubsystemBase {
     private static int extPos;
     private static int extTarget;
 
+    private static double clawPos;
+    private static double clawFlipPos;
+    private static double clawAnglePos;
+
 
     private static final int extMin = 0;
     private static final int extMax = (int) (ticks_in_inch * 42)-22;
@@ -55,6 +62,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
         extenderMotorLeft = hMap.get(DcMotorEx.class, "EXL");
         extenderMotorRight = hMap.get(DcMotorEx.class,  "EXR");
+
 
 
 
@@ -121,6 +129,9 @@ public class Stage1Subsystem extends SubsystemBase {
         // CLamping
 
         extTarget = (int) Math.max(extMin, Math.min(extMax, extTarget));
+        clawPos = Math.max(0, Math.min(1, clawPos));
+        clawAnglePos = Math.max(0, Math.min(1, clawAnglePos));
+        clawFlipPos = Math.max(0, Math.min(1, clawFlipPos));
 
 
         //Extension motor
