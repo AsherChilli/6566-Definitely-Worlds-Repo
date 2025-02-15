@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.OpenCV.Processors.sampleProcessor;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
@@ -29,6 +31,11 @@ public class NewImrpovedAtbun extends OpMode {
     MultipleTelemetry telemetry;
 
     int pathState = 0;
+
+    private int stage2State = 0;
+
+    private Timer stage2timer = new Timer();
+    private Timer pathTimer = new Timer();
 
     //Class of sampleDetection
     sampleProcessor processor = new sampleProcessor();
@@ -161,7 +168,72 @@ public class NewImrpovedAtbun extends OpMode {
 
     }
 
-    void buildPaths(){
+    private void setStage2(int status) {
+        stage2State = status;
+        stage2timer.resetTimer();
+    }
+    private void stage2Updater() {
+        switch (stage2State) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case pickFromRack:
+                ClipArm.setTargetPosition(-670 + 1493);
+                ClipArm.setPower(.7);
+                ClipHold.setPosition(0);
+                ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (ClipArm.getCurrentPosition() == -670 + 1493 && stage2timer.getElapsedTime() > 1500) {
+                    ClipHold.setPosition(0.5);
+                    ClipArm.setTargetPosition(-600 + 1493);
+                    ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                } else if (stage2timer.getElapsedTime() > 2500) {
+                    setStage2(1001);
+                }
+                break;
+
+
+            case 1001:
+                ClipHold.setPosition(holdOpenMax);
+                ClipWrist.setPosition(.65);
+
+                break;
+            case 1002:
+                ClipWrist.setPosition(.65);
+                ClipHold.setPosition(holdOpenMax);
+                ClipArm.setTargetPosition(0 + 1493);
+                ClipArm.setPower(.3);
+                ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                break;
+
+            case 1003:
+                GameClaw.setPosition(.46);//.525
+                ClipWrist.setPosition(.5);
+                double time = runtime.time();
+                if (runtime.time() - time > .25) {
+                    ClipHold.setPosition(holdClose);
+                }
+                break;
+            case 1004:
+                ClipWrist.setPosition(.6);
+                ClipHold.setPosition(holdCloseTight);
+                if (stage2timer.getElapsedTime() > 250) {
+                    ClipArm.setTargetPosition(-300 + 1493);
+                    ClipArm.setPower(.4);
+                }
+                break;
+            case 1005:
+                ClipWrist.setPosition(.825);//.8
+                break;
+            case 1006:
+                ClipArm.setTargetPosition(55 + 1493);
+                break;
+        }
+    }
+
+
+
+        void buildPaths(){
         //Sets up preload path
         preload = follower.pathBuilder()
                 .addPath((new BezierLine(new Point(poses.start), new Point(poses.score))))

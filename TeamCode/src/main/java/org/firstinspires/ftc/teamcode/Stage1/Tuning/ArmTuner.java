@@ -33,7 +33,7 @@ public class ArmTuner extends LinearOpMode {
         waitForStart();
 
 
-        Stage1Subsystem stage1Subsystem = new Stage1Subsystem(hardwareMap, "armExtendUp", "armExtendDown", "armAngleLeft", "armAngleRight");
+        Stage1Subsystem stage1Subsystem = new Stage1Subsystem(hardwareMap);
 
 
 
@@ -41,22 +41,21 @@ public class ArmTuner extends LinearOpMode {
 
 
 
-            if (pAngle != Stage1Subsystem.getAngleP() || iAngle != Stage1Subsystem.getAngleI() || dAngle != Stage1Subsystem.getAngleD() || fAngle != Stage1Subsystem.getAngleFeedForward() || pExtend != Stage1Subsystem.getExtendP() || iExtend != Stage1Subsystem.getExtendI() || dExtend != Stage1Subsystem.getExtendD()) {
-                Stage1Subsystem.setAnglePID(pAngle, iAngle, dAngle);
+            if ( pExtend != Stage1Subsystem.getExtendP() || iExtend != Stage1Subsystem.getExtendI() || dExtend != Stage1Subsystem.getExtendD()) {
+
                 Stage1Subsystem.setExtendPID(pExtend, iExtend, dExtend);
             }
 
-            Stage1Subsystem.setPos(new Vector2d(x,y));
+            Stage1Subsystem.setPos(x);
             telemetry.addData("isBusy?: ", Stage1Subsystem.isBusy());
             Stage1Subsystem.update();
 
 
-            telemetry.addData("Angle Ticks: ", Stage1Subsystem.getAnglePos());
-            telemetry.addData("Angle Degrees: ", Stage1Subsystem.getAnglePosDEG());
+
             telemetry.addData("Extension Ticks: ", Stage1Subsystem.getExtenderPos());
             telemetry.addData("Extension Inches: ", Stage1Subsystem.getExtenderPosIN());
 
-            telemetry.addData("Current REAL Angle Target", Stage1Subsystem.getAngleTarget());
+
             telemetry.addData("Current REAL Extend Target", Stage1Subsystem.getExtTarget());
 
             telemetry.addData("Current Set X: ",x );
