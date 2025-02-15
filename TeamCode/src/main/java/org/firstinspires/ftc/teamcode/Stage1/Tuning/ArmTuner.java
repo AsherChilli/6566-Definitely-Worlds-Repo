@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 @Config
-@TeleOp
+@TeleOp(name = "ArmTunerStage1", group = "Tuning")
 public class ArmTuner extends LinearOpMode {
 
 

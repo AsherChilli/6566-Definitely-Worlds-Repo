@@ -37,7 +37,6 @@ import java.util.List;
  */
 @Config
 @TeleOp(group = "Pedro Pathing Tuning", name = "Localization Test")
-@Disabled
 public class LocalizationTest extends OpMode {
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;

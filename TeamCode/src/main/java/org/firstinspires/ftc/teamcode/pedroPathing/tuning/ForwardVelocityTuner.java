@@ -45,7 +45,7 @@ import java.util.List;
  */
 @Config
 @Autonomous(name = "Forward Velocity Tuner", group = "Autonomous Pathing Tuning")
-@Disabled
+
 public class ForwardVelocityTuner extends OpMode {
     private ArrayList<Double> velocities = new ArrayList<>();
 

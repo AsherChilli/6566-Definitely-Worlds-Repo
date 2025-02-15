@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Disabled
+
 @Autonomous (name = "Circle", group = "Autonomous Pathing Tuning")
 public class Circle extends OpMode {
     private Telemetry telemetryA;

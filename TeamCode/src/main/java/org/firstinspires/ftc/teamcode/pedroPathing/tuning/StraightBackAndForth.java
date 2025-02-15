@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  */
 @Config
 @Autonomous (name = "Straight Back And Forth", group = "Autonomous Pathing Tuning")
-@Disabled
+
 public class StraightBackAndForth extends OpMode {
     private Telemetry telemetryA;
 

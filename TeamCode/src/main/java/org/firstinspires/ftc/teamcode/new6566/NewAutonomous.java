@@ -75,18 +75,57 @@ public class NewAutonomous extends LinearOpMode {
             case 1:
                 break;
             case pickFromRack:
-                ClipWrist.setPosition(.65);
-                ClipHold.setPosition(holdOpenMax);
-                ClipArm.setTargetPosition(1493);
-                ClipArm.setPower(.3);
+                ClipArm.setTargetPosition(-670 + 1493);
+                ClipArm.setPower(.7);
+                ClipHold.setPosition(0);
                 ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (stage2timer.getElapsedTime() > 250) {
+                if(ClipArm.getCurrentPosition() == -670 + 1493 && stage2timer.getElapsedTime() > 1500) {
+                    ClipHold.setPosition(0.5);
+                    ClipArm.setTargetPosition(-600 + 1493);
+                    ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                } else if (stage2timer.getElapsedTime() > 2500) {
                     setStage2(1001);
                 }
                 break;
+
+
             case 1001:
+                ClipHold.setPosition(holdOpenMax);
+                ClipWrist.setPosition(.65);
+
+                break;
+            case 1002:
+                ClipWrist.setPosition(.65);
+                ClipHold.setPosition(holdOpenMax);
+                ClipArm.setTargetPosition(0 + 1493);
+                ClipArm.setPower(.3);
+                ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                break;
+
+            case 1003:
+                GameClaw.setPosition(.46);//.525
+                ClipWrist.setPosition(.5);
+                double time = runtime.time();
+                if (runtime.time() - time > .25) {
+                ClipHold.setPosition(holdClose);
+                }
+                break;
+            case 1004:
+                ClipWrist.setPosition(.6);
+                ClipHold.setPosition(holdCloseTight);
+                if (stage2timer.getElapsedTime() > 250) {
+                ClipArm.setTargetPosition(-300 + 1493);
+                ClipArm.setPower(.4);
+                }
+                break;
+            case 1005:
+                ClipWrist.setPosition(.825);//.8
+                break;
+            case 1006:
+                ClipArm.setTargetPosition(55 + 1493);
                 break;
         }
+
     }
 
 
@@ -161,19 +200,20 @@ public class NewAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         initializeHardware();
-        setStartingPostion("init");
+        //setStartingPostion("init");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
 
         if (opModeIsActive()) {
-            resetEncoders();
-            resetIMU();
+            //resetEncoders();
+            //resetIMU();
 
             // Example full scoring sequence
-            performNewScoringSequence();
-
+            //performNewScoringSequence();
+            stage2Status = 1000;
+            stage2Updater();
             // Additional scoring sequences can be added here
             // You might want to add pixel collection between scores
         }
@@ -192,22 +232,22 @@ public class NewAutonomous extends LinearOpMode {
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
         // Initialize mechanism motors/servos
-        ExtendLeft = hardwareMap.get(DcMotorEx.class, "EXL");
-        ExtendRight = hardwareMap.get(DcMotorEx.class, "EXR");
-        Elbow = hardwareMap.get(DcMotorEx.class, "ELB");
-        ClipArm = hardwareMap.get(DcMotorEx.class, "CPA");
-        ChainMotor = hardwareMap.get(DcMotorEx.class, "CHM");
-        ClipWrist = hardwareMap.get(Servo.class, "CWR");
+        //ExtendLeft = hardwareMap.get(DcMotorEx.class, "EXL");
+        //ExtendRight = hardwareMap.get(DcMotorEx.class, "EXR");
+        //Elbow = hardwareMap.get(DcMotorEx.class, "ELB");
+        ClipArm = hardwareMap.get(DcMotorEx.class, "CAR");
+        //ChainMotor = hardwareMap.get(DcMotorEx.class, "CHM");
+        //ClipWrist = hardwareMap.get(Servo.class, "CWR");
         ClipHold = hardwareMap.get(Servo.class, "CLH");
         GameWrist = hardwareMap.get(Servo.class, "GMW");
-        GameTwist = hardwareMap.get(Servo.class, "GMT");
-        GameClaw = hardwareMap.get(Servo.class, "GMC");
-        Tilter = hardwareMap.get(Servo.class, "TLT");
-        Rack = hardwareMap.get(Servo.class,"RCK");
-        ClipElbow = hardwareMap.get(DcMotorEx.class,"CEB");
+        //GameTwist = hardwareMap.get(Servo.class, "GMT");
+        //GameClaw = hardwareMap.get(Servo.class, "GMC");
+        //Tilter = hardwareMap.get(Servo.class, "TLT");
+        //Rack = hardwareMap.get(Servo.class,"RCK");
+        //ClipElbow = hardwareMap.get(DcMotorEx.class,"CEB");
         // Initialize odometry pods
-        leftPod = hardwareMap.get(DcMotorEx.class, "TRM");
-        rightPod = hardwareMap.get(DcMotorEx.class, "BRM");
+        //leftPod = hardwareMap.get(DcMotorEx.class, "TRM");
+        //rightPod = hardwareMap.get(DcMotorEx.class, "BRM");
 
         // Initialize IMU
 

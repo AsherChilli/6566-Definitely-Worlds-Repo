@@ -139,6 +139,14 @@ public class SleekClippaDrive extends OpMode {
             }
         }
 
+        //Ensure claw will not break :pray:
+        if(r.ExtendRight.getCurrentPosition() < 1150 || r.ExtendLeft.getCurrentPosition() < 1150){
+
+            r.GameWrist.setPosition(.7);
+
+        }
+
+
         //Score Position
         if (gamepad2.dpad_up) {
             r.ClipArm.setTargetPosition(-670 + 1493);
@@ -218,6 +226,10 @@ public class SleekClippaDrive extends OpMode {
             r.ClipArm.setTargetPosition(100 + 1493);
             r.ClipArm.setPower(.6);
             r.ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if (gamepad1.a){
+            r.ClipWrist.setPosition(0.15);
+            r.ClipArm.setTargetPosition(-895 + 1493);
         }
 
         telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
