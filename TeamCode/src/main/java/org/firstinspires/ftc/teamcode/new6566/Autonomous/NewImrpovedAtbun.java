@@ -85,9 +85,12 @@ public class NewImrpovedAtbun extends OpMode {
 
     @Override
     public void loop() {
+        //I loveee my autonomous path update
+        autonomousPathUpdate();
 
 
-
+        telemetry.addData("Path State: ", pathState);
+        telemetry.update();
 
     }
 
