@@ -14,8 +14,8 @@ public class SleekClippaDrive extends OpMode {
     SleekClippaHardware r = new SleekClippaHardware();
     private ElapsedTime runtime = new ElapsedTime();
 
-    Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
-    Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
+    //Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
+    //Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
 
     //Clip Vars
     double holdOpenMax = .475;//.45

@@ -8,15 +8,24 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Stage1.Tuning.ArmTuner;
 //import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stage2Subsystem extends SubsystemBase {
 
-    private static DcMotorEx AngleMotor = null;
-    private static DcMotorEx extenderMotorRight = null;
+    private static DcMotorEx AngleMotor;
+    //private static DcMotorEx extenderMotorRight = null;
 
-    private static Servo clipHold = null;
-    private static Servo clipWrist = null;
+    private static ElapsedTime runtime = new ElapsedTime();
+    private static double time = 0;
+    private static Servo clipHold;
+    private static Servo clipWrist;
+
+    private static Servo clipRackLeft;
+    private static Servo clipRackRight;
+
 
 
     static double ticks_per_rotation = 751.8;
@@ -59,10 +68,13 @@ public class Stage2Subsystem extends SubsystemBase {
 
     public Stage2Subsystem(final HardwareMap hMap){
 
-        AngleMotor = hMap.get(DcMotorEx.class, "EXL");
+        AngleMotor = hMap.get(DcMotorEx.class, "CAR");
 
         clipHold = hMap.get(Servo.class, "CWR");
         clipWrist = hMap.get(Servo.class, "CLH");
+
+        clipRackLeft = hMap.get(Servo.class, "CCL");
+        clipRackRight = hMap.get(Servo.class, "CCR");
 
 
 
@@ -117,22 +129,53 @@ public class Stage2Subsystem extends SubsystemBase {
     public static void holdClose() {clawPos = 0.35;}
     public static void holdCloseTight() {clawPos = 0.3;}
 
-    public static void readyClipRack() {
+    public void raiseCams(){
+
+        clipRackLeft.setPosition(.7);
+        clipRackRight.setPosition(.7);
 
     }
-    public static void clipRack() {
+    public void lowerCams(){
+
+        clipRackLeft.setPosition(.4);
+        clipRackRight.setPosition(.4);
 
     }
-    public static void readyClip() {
+
+    //Make sure everything for getting a clip is in the right place
+    public void readyClipRack() {
+        lowerCams();
+        clipHold.setPosition(0.475);
+        AngleMotor.setTargetPosition(-670 + 1493);
+        AngleMotor.setPower(.7);
+        AngleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    //Get the clip from the clip rack
+    public void clipRack() {
+        //Grab clip in thingy
+        clipWrist.setPosition(.6);
+        time = runtime.time();
+        while (runtime.time() - time <= .25) {
+            continue;
+        } if (runtime.time() - time > .25) {
+            AngleMotor.setTargetPosition(-300 + 1493);
+            AngleMotor.setPower(.4);
+        } else if(runtime.time() - time > .75){
+            clipHold.setPosition(.3);
+        }
+    }
+    public void readyClip() {
+
+
 
     }
-    public static void clip() {
+    public void clip() {
 
     }
-    public static void readyScore() {
+    public void readyScore() {
 
     }
-    public static void score() {
+    public void score() {
 
     }
 

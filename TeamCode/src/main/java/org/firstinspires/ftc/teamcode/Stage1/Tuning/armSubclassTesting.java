@@ -59,13 +59,13 @@ public class armSubclassTesting extends LinearOpMode {
 
 
 
-            telemetry.addData("Angle Ticks", stage1Subsystem.getAnglePos());
-            telemetry.addData("Angle Degrees", stage1Subsystem.getAnglePosDEG());
+            //telemetry.addData("Angle Ticks", stage1Subsystem.getAnglePos());
+            //telemetry.addData("Angle Degrees", stage1Subsystem.getAnglePosDEG());
             telemetry.addData("Extension Ticks", stage1Subsystem.getExtenderPos());
             telemetry.addData("Extension Inches", stage1Subsystem.getExtenderPosIN());
 
 
-            telemetry.addData("Current REAL Angle Target", stage1Subsystem.getAngleTargetDG());
+            //telemetry.addData("Current REAL Angle Target", stage1Subsystem.getAngleTargetDG());
             telemetry.addData("Current REAL Extend Target", stage1Subsystem.getExtTargetIN());
 
             telemetry.addData("Current Set X: ",x );

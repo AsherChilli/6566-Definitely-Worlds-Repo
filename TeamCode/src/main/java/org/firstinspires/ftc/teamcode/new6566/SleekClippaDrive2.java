@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.new6566;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,13 +11,13 @@ import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 import org.firstinspires.ftc.teamcode.Stage2.Stage2Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
-@TeleOp(name="SleekClippaDrive", group = "TeleOp")
+@TeleOp(name="Awesome Drive", group = "TeleOp")
 public class SleekClippaDrive2 extends OpMode {
     SleekClippaHardware r = new SleekClippaHardware();
     private ElapsedTime runtime = new ElapsedTime();
 
-    Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
-    Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
+    Stage1Subsystem stage1;
+    Stage2Subsystem stage2;
 
     //Clip Vars
     double holdOpenMax = .475;//.45
@@ -29,6 +31,10 @@ public class SleekClippaDrive2 extends OpMode {
     public void init() {
         r.init_robot(this);
         follower = new Follower(hardwareMap);
+        stage2 = new Stage2Subsystem(hardwareMap);
+        stage1 = new Stage1Subsystem(hardwareMap);
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
    }
 
     @Override
@@ -49,6 +55,9 @@ public class SleekClippaDrive2 extends OpMode {
 
         if (gamepad1.left_bumper) Stage1Subsystem.close();
         else if (gamepad1.right_bumper) Stage1Subsystem.open();
+
+        if(gamepad1.triangle){stage2.readyClipRack();}
+        if(gamepad1.square){stage2.clipRack();}
 
         
 

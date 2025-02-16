@@ -27,8 +27,8 @@ public class sampleProcessor implements VisionProcessor {
 
     public static Scalar lowBlue = new Scalar(0, 80, 60);
     public static Scalar highBlue = new Scalar(20, 255, 255);
-    public static Scalar lowRed1 = new Scalar(20, 40, 100);
-    public static Scalar highRed1 = new Scalar(110, 130, 100);
+    public static Scalar lowRed1 = new Scalar(100, 100, 100);
+    public static Scalar highRed1 = new Scalar(255, 255, 255);
     public static Scalar lowRed2 = new Scalar(140, 255, 255);
     public static Scalar highRed2 = new Scalar(30, 255, 255);
     public static Scalar lowerYellow = new Scalar(90, 60, 60);

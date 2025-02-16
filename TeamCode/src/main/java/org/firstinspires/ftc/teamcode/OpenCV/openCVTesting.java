@@ -94,7 +94,7 @@ public class openCVTesting extends LinearOpMode {
 
             telemetry.addData("Number of Tags ", detections.size());
             telemetry.addData("Camera State", visionPortal.getCameraState());
-            telemetry.addData("Position of Sample", sampleProcessor.getPosition());
+            //telemetry.addData("Position of Sample", sampleProcessor.getPosition());
             telemetry.addLine();
             //Every 20 frames it'll run the april tag detections
             if(frame % 20 == 0) {
