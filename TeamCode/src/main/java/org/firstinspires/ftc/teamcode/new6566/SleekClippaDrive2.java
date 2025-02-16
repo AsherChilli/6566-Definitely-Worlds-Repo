@@ -59,6 +59,9 @@ public class SleekClippaDrive2 extends OpMode {
         if(gamepad1.triangle){stage2.readyClipRack();}
         if(gamepad1.square){stage2.clipRack();}
 
+        Stage1Subsystem.update();
+        Stage2Subsystem.update();
+
         
 
 
