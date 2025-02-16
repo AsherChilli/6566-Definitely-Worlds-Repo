@@ -4,10 +4,10 @@ package org.firstinspires.ftc.teamcode.Stage1;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stage1Subsystem extends SubsystemBase {
@@ -15,7 +15,9 @@ public class Stage1Subsystem extends SubsystemBase {
     private static DcMotorEx extenderMotorLeft = null;
     private static DcMotorEx extenderMotorRight = null;
 
-    private static Servo
+    private static Servo clawServo = null;
+    private static Servo clawWristServo = null;
+    private static Servo clawTwistServo = null;
 
 
 
@@ -40,12 +42,12 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
 
-    private static int extPos;
-    private static int extTarget;
+    private static int extPos = 0;
+    private static int extTarget = 0;
 
     private static double clawPos;
-    private static double clawFlipPos;
-    private static double clawAnglePos;
+    private static double clawWristPos;
+    private static double clawTwistPos;
 
 
     private static final int extMin = 0;
@@ -62,6 +64,10 @@ public class Stage1Subsystem extends SubsystemBase {
 
         extenderMotorLeft = hMap.get(DcMotorEx.class, "EXL");
         extenderMotorRight = hMap.get(DcMotorEx.class,  "EXR");
+
+        clawServo = hMap.get(Servo.class, "GMC");
+        clawWristServo = hMap.get(Servo.class, "GMW");
+        clawTwistServo = hMap.get(Servo.class, "GMT");
 
 
 
@@ -84,9 +90,12 @@ public class Stage1Subsystem extends SubsystemBase {
     // Setters
     // ----------------
     public static void setPos(double ext) {
-        int armExt = extenderMotorLeft.getCurrentPosition();
 
         extTarget = (int) ext;
+    }
+
+    public static void setPosIN(double ext) {
+        extTarget = (int) (ext * ticks_in_inch);
     }
     // ----------------
     // Getters
@@ -98,7 +107,27 @@ public class Stage1Subsystem extends SubsystemBase {
     public static int getExtenderPos(){return extenderMotorLeft.getCurrentPosition();}
     public static double getExtenderPosIN(){return (extenderMotorLeft.getCurrentPosition() / ticks_in_inch);}
 
+    public static double getClawPos(){return clawPos;}
+    public static double getClawWristPos(){return clawWristPos;}
+    public static double getClawAnglePos(){return clawTwistPos;}
+
+    public static void setClawPos(double pos) {
+        clawPos = pos;
+    }
+    public static void setClawWristPos(double pos) {
+        clawWristPos = pos;
+    }
+    public static void setClawAnglePos(double pos) {
+        clawTwistPos = pos;
+    }
+
     public static boolean isBusy(){return isBusy;}
+
+    public static void tuck() {
+        extTarget = 0;
+        clawWristPos = 0.7;
+        clawTwistPos = 0.5;
+    }
 
 
 
@@ -118,7 +147,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
     public static void update() {
         double extendPower;
-        int extendPos;
+
 
 
         double armExt = extenderMotorLeft.getCurrentPosition();
@@ -128,15 +157,19 @@ public class Stage1Subsystem extends SubsystemBase {
 
         // CLamping
 
-        extTarget = (int) Math.max(extMin, Math.min(extMax, extTarget));
+        extTarget =  Math.max(extMin, Math.min(extMax, extTarget));
         clawPos = Math.max(0, Math.min(1, clawPos));
-        clawAnglePos = Math.max(0, Math.min(1, clawAnglePos));
-        clawFlipPos = Math.max(0, Math.min(1, clawFlipPos));
+        clawTwistPos = Math.max(0, Math.min(1, clawTwistPos));
+        clawWristPos = Math.max(extPos < 200 ? 0.7 : 0, Math.min(1, clawWristPos));
 
 
         //Extension motor
         //extendController.setPID(pExtend,iExtend,dExtend);
         extendPower = Math.max(-1, Math.min(1, extendController.calculate(extenderMotorLeft.getCurrentPosition(), extTarget)));
+
+        clawServo.setPosition(clawPos);
+        clawWristServo.setPosition(clawWristPos);
+        clawTwistServo.setPosition(clawTwistPos);
 
         extenderMotorLeft.setPower(extendPower);
         isBusy = !( armExt >= extTarget - 10 && armExt <= extTarget + 10);

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.new6566.Autonomous;
 
+import android.media.audiofx.DynamicsProcessing;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -10,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.OpenCV.Processors.sampleProcessor;
+import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
+import org.firstinspires.ftc.teamcode.Stage2.Stage2Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
@@ -26,6 +29,9 @@ public class NewImrpovedAtbun extends OpMode {
     Follower follower;
     VisionPortal visionPortal;
 
+    Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
+    Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
+
     PathChain preload, prepareClip, collectClip, pickupSample, moveToScore;
 
     MultipleTelemetry telemetry;
@@ -33,6 +39,8 @@ public class NewImrpovedAtbun extends OpMode {
     int pathState = 0;
 
     private int stage2State = 0;
+
+    private final int pickFromRack = 1000;
 
     private Timer stage2timer = new Timer();
     private Timer pathTimer = new Timer();
@@ -179,14 +187,12 @@ public class NewImrpovedAtbun extends OpMode {
             case 1:
                 break;
             case pickFromRack:
-                ClipArm.setTargetPosition(-670 + 1493);
-                ClipArm.setPower(.7);
-                ClipHold.setPosition(0);
-                ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (ClipArm.getCurrentPosition() == -670 + 1493 && stage2timer.getElapsedTime() > 1500) {
-                    ClipHold.setPosition(0.5);
-                    ClipArm.setTargetPosition(-600 + 1493);
-                    ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Stage2Subsystem.setAngTarget(-670 + 1493);
+                Stage2Subsystem.setAngPower(0.7);
+                Stage2Subsystem.setClawPos(0);
+                if (Stage2Subsystem.getAngPos() == -670 + 1493 && stage2timer.getElapsedTime() > 1500) {
+                    Stage2Subsystem.setClawPos(0.5);
+                    Stage2Subsystem.setAngTarget(-600 + 1493);
                 } else if (stage2timer.getElapsedTime() > 2500) {
                     setStage2(1001);
                 }
@@ -194,39 +200,38 @@ public class NewImrpovedAtbun extends OpMode {
 
 
             case 1001:
-                ClipHold.setPosition(holdOpenMax);
-                ClipWrist.setPosition(.65);
+                Stage2Subsystem.holdOpenMax();
+                Stage2Subsystem.setClawWristPos(0.65);
+
 
                 break;
             case 1002:
-                ClipWrist.setPosition(.65);
-                ClipHold.setPosition(holdOpenMax);
-                ClipArm.setTargetPosition(0 + 1493);
-                ClipArm.setPower(.3);
-                ClipArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Stage2Subsystem.setClawWristPos(0.65);
+                Stage2Subsystem.holdOpenMax();
+                Stage2Subsystem.setAngTarget(0 + 1493);
+                Stage2Subsystem.setAngPower(0.3);
                 break;
 
             case 1003:
-                GameClaw.setPosition(.46);//.525
-                ClipWrist.setPosition(.5);
-                double time = runtime.time();
-                if (runtime.time() - time > .25) {
-                    ClipHold.setPosition(holdClose);
+                Stage2Subsystem.setClawPos(.46);
+                Stage2Subsystem.setClawWristPos(.5);
+                if (stage2timer.getElapsedTime() > 250) {
+                    Stage2Subsystem.holdClose();
                 }
                 break;
             case 1004:
-                ClipWrist.setPosition(.6);
-                ClipHold.setPosition(holdCloseTight);
+                Stage2Subsystem.setClawWristPos(.6);
+                Stage2Subsystem.holdCloseTight();
                 if (stage2timer.getElapsedTime() > 250) {
-                    ClipArm.setTargetPosition(-300 + 1493);
-                    ClipArm.setPower(.4);
+                    Stage2Subsystem.setAngTarget(-300 + 1493);
+                    Stage2Subsystem.setAngPower(.4);
                 }
                 break;
             case 1005:
-                ClipWrist.setPosition(.825);//.8
+                Stage2Subsystem.setClawWristPos(.825);
                 break;
             case 1006:
-                ClipArm.setTargetPosition(55 + 1493);
+                Stage2Subsystem.setAngTarget(55 + 1493);
                 break;
         }
     }

@@ -5,12 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
+import org.firstinspires.ftc.teamcode.Stage2.Stage2Subsystem;
 import org.firstinspires.ftc.teamcode.new6566.SleekClippaHardware;
 
 @TeleOp(name="SleekClippaDrive", group = "TeleOp")
 public class SleekClippaDrive extends OpMode {
     SleekClippaHardware r = new SleekClippaHardware();
     private ElapsedTime runtime = new ElapsedTime();
+
+    Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
+    Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
 
     //Clip Vars
     double holdOpenMax = .475;//.45
