@@ -128,7 +128,8 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristPos = 0.7;
         clawTwistPos = 0.5;
     }
-
+    public static void close() {setClawPos(0.3);}
+    public static void open() {setClawPos(0.6);}
 
 
     public static void setExtendPID(double pExtend, double iExtend, double dExtend){

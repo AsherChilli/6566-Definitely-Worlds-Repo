@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV.Processors;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
-
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -14,6 +12,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -21,6 +20,7 @@ import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Config
 public class sampleProcessor implements VisionProcessor {
 
@@ -38,19 +38,71 @@ public class sampleProcessor implements VisionProcessor {
 
     private int width;
     private int height;
-    private Position position;
     double cX = 0;
     double cY = 0;
     public static final double objectWidthInRealWorldUnits = 1.5;  // Replace with the actual width of the object in real-world units
-    public static final double focalLength = 1430;
+    public static final double focalLength = 987.42857143;
 
-    enum Position {
-        LEFT,
-        RIGHT,
-        MIDDLE,
-        NOT_FOUND
+    public static final double cameraHeight = 4.7;
+
+    private SamplePose lastPose = null;
+    private SamplePose newPose = null;
+
+
+    public static class SamplePose {
+        double distance;   // Distance from camera to prism in inches
+        double rotation;    // Rotation angle in degrees
+
+        double x;
+
+        double y;
+
+        SamplePose(double distance , double rotation) {
+            this.distance = distance;
+            this.rotation = rotation;
+        }
+
+        SamplePose(double distance, double rotation, double x, double y) {
+            this.distance = distance;
+            this.rotation = rotation;
+            this.x = x;
+            this.y = y;
+        }
+
+        public double getDistance(){
+            return distance;
+        }
+        public double getRotation() {
+            return rotation;
+        }
+
+        public void findXY(double xOffset, double yOffset) {
+            y = 1/Math.tan(Math.atan2(yOffset,focalLength)) * cameraHeight;
+            x = 1/Math.tan(Math.atan2(xOffset,focalLength)) / y;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public SamplePose getAverage(SamplePose other) {
+            if (other == null)  return new SamplePose(distance,rotation,x,y);
+            double distance = (this.distance + other.distance) / 2;
+            double rotation = (this.rotation + other.rotation) / 2;
+            double x = (this.x + other.x) / 2;
+            double y = (this.y + other.y) / 2;
+            return new SamplePose(distance, rotation, x, y);
+        }
     }
 
+    public SamplePose getPose() {
+        if ( newPose != null) return newPose.getAverage(lastPose);
+        return new SamplePose(0,0,0,0);
+    }
     public enum Color {
         RED,
         BLUE,
@@ -63,7 +115,7 @@ public class sampleProcessor implements VisionProcessor {
 
 
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
+    public void init(int width, int height,  CameraCalibration calibration) {
         this.width = width;
         this.height = height;
     }
@@ -86,12 +138,32 @@ public class sampleProcessor implements VisionProcessor {
             Imgproc.drawContours(input, contours, contours.indexOf(largestContour), new Scalar(255, 0, 0), 2);
             // Calculate the width of the bounding box
             width = (int) calculateWidth(largestContour);
+            RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(largestContour.toArray()));
+            Point[] vertices = new Point[4];
+            rect.points(vertices);
 
-            // Display the width next to the label
-            String widthLabel = "Width: " + (int) width + " pixels";
-            Imgproc.putText(input, widthLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+            for (int i = 0; i < 4; i++) {
+                Imgproc.line(input, vertices[i], vertices[(i + 1) % 4], new Scalar(0, 255, 0), 2);
+            }
+            lastPose = newPose;
+            newPose = new SamplePose(1.75*focalLength/Math.min(rect.size.width, rect.size.height),(Math.min(rect.size.width, rect.size.height)/Math.max(rect.size.width, rect.size.height)-0.428571428571)*157.526254376);
+            newPose.findXY(rect.center.x-width/2, rect.center.y-height/2);
+
+
+            String angLabel = "Angle: " + String.format("%.2f", newPose.getRotation()) + " degrees";
+            String DistLabel = "Dist: " + String.format("%.2f",newPose.getDistance()) + " inches";
+            String xLabel = "X: " + String.format("%.2f",newPose.getX()) + " inches";
+            String yLabel = "Y: " + String.format("%.2f",newPose.getY()) + " inches";
+            String degrLabel = "Degrees: " + String.format("%.2f", Math.toDegrees(Math.atan2(rect.center.x-width/2, focalLength))) + "Degrees";
+
+
+            Imgproc.putText(input, DistLabel, new Point(cX + 10, cY + 40), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+            Imgproc.putText(input, angLabel, new Point(cX + 10, cY + 20), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+            Imgproc.putText(input, xLabel, new Point(cX + 10, cY+60), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+            Imgproc.putText(input, yLabel, new Point(cX + 10, cY+80), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+            Imgproc.putText(input, degrLabel, new Point(cX + 10, cY+100), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
             //Display the Distance
-            String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
+            //String distanceLabel = "Distance: " + String.format("%.2f", getDistance(width)) + " inches";
             // Calculate the centroid of the largest contour
             Moments moments = Imgproc.moments(largestContour);
             cX = moments.get_m10() / moments.get_m00();
@@ -147,6 +219,7 @@ public class sampleProcessor implements VisionProcessor {
         return largestContour;
     }
     private double calculateWidth(MatOfPoint contour) {
+        RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
         Rect boundingRect = Imgproc.boundingRect(contour);
         return boundingRect.width;
     }
@@ -156,10 +229,6 @@ public class sampleProcessor implements VisionProcessor {
 
 
 
-    }
-
-    public Position getPosition(){
-        return position;
     }
 
     public static double getDistance(double width){

@@ -102,6 +102,8 @@ public class NewImrpovedAtbun extends OpMode {
     public void loop() {
         //I loveee my autonomous path update
         autonomousPathUpdate();
+        stage2Updater();
+
 
 
         telemetry.addData("Path State: ", pathState);
@@ -123,27 +125,42 @@ public class NewImrpovedAtbun extends OpMode {
                 Raise the arm to score
                 Some kind of score function
                  */
+                follower.followPath(preload, true);
                 setState(2);
                 break;
 
             case(2):
+                if (!follower.isBusy())
+                    setState(3);
+                break;
+            case(3):
                 /*
                 We have to:
                 Flip the arm to it's top position
                 Move to the preloadClip spot
                 Ensure cams are lowered (servos are powered to the low end)
                  */
-                setState(3);
+                follower.followPath(prepareClip);
+                setState(4);
                 break;
-            case(3):
+            case(4):
+                if (!follower.isBusy())
+                    setState(5);
+                break;
+            case(5):
                 /*
                 We have to:
                 Move into the wall
                 Raise the cams (both of them please, all the way)
                  */
-                setState(4);
+                follower.followPath(collectClip);
+                setState(6);
                 break;
-            case(4):
+            case(6):
+                if (!follower.isBusy())
+                    setState(7);
+                break;
+            case(7):
                 /*
                 We have to:
                 Move to pickup the sample
@@ -154,9 +171,14 @@ public class NewImrpovedAtbun extends OpMode {
                 Retract back in
                 Have claw(s) in their clipping position
                  */
-                setState(5);
+                follower.followPath(pickupSample);
+                setState(8);
                 break;
-            case(5):
+            case(8):
+                if (!follower.isBusy())
+                    setState(9);
+                break;
+            case(9):
                 /*
                 We have to:
                 Clip the sample

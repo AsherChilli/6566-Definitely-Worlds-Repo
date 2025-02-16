@@ -87,9 +87,7 @@ public class Stage2Subsystem extends SubsystemBase {
     // ----------------
     // Setters
     // ----------------
-    public static void setAngTarget(double ang) {
-        angTarget = (int) ang;
-    }
+    public static void setAngTarget(double ang) {angTarget = (int) ang;}
 
     // ----------------
     // Getters
@@ -106,32 +104,37 @@ public class Stage2Subsystem extends SubsystemBase {
     public static double getClawPos(){return clawPos;}
     public static double getClawWristPos(){return clawWristPos;}
 
-    public static void setClawPos(double pos) {
-        clawPos = pos;
-    }
-    public static void setClawWristPos(double pos) {
-        clawWristPos = pos;
-    }
+    public static void setClawPos(double pos) {clawPos = pos;}
+    public static void setClawWristPos(double pos) {clawWristPos = pos;}
 
     public static boolean isBusy(){return isBusy;}
 
 
 
-    public static void setAngPower(double power){
-        angPower = power;
-    }
+    public static void setAngPower(double power){angPower = power;}
 
-    public static void holdOpenMax() {
-        clawPos = 0.475;
-    }
-    public static void holdClose() {
-        clawPos = 0.35;
-    }
-    public static void holdCloseTight() {
-        clawPos = 0.3;
-    }
+    public static void holdOpenMax() {clawPos = 0.475;}
+    public static void holdClose() {clawPos = 0.35;}
+    public static void holdCloseTight() {clawPos = 0.3;}
 
+    public static void readyClipRack() {
 
+    }
+    public static void clipRack() {
+
+    }
+    public static void readyClip() {
+
+    }
+    public static void clip() {
+
+    }
+    public static void readyScore() {
+
+    }
+    public static void score() {
+
+    }
 
 //    public static void setExtendPID(double pExtend, double iExtend, double dExtend){
 //        extendController.setPID(pExtend, iExtend, dExtend);
