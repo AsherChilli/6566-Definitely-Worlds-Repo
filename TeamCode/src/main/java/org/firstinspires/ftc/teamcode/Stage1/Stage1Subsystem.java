@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Stage1;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,20 +39,20 @@ public class Stage1Subsystem extends SubsystemBase {
     private static final double ticks_in_inch = ticks_in_mm / 25.4;
 
 
-    private static double pExtend = 0.012, iExtend = 0/*0.05*/, dExtend = 0.0004, fExtend = 0;
+    private static double pExtend = 0.01, iExtend = 0/*0.05*/, dExtend = 0.0004, fExtend = 0;
 
 
 
     private static int extPos = 0;
     private static int extTarget = 0;
 
-    private static double clawPos;
+    private static double clawPos = 0.4;
     private static double clawWristPos;
-    private static double clawTwistPos;
+    private static double clawTwistPos = 0.625;
 
 
     private static final int extMin = 0;
-    private static final int extMax = (int) (ticks_in_inch * 42)-22;
+    private static final int extMax = 2500;//(int) (ticks_in_inch * 42)-22;
 
 
 
@@ -74,6 +75,9 @@ public class Stage1Subsystem extends SubsystemBase {
 
         extenderMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         extenderMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        extenderMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extenderMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
@@ -128,7 +132,8 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristPos = 0.7;
         clawTwistPos = 0.5;
     }
-    public static void close() {setClawPos(0.3);}
+    public static void close() {setClawPos(0.42);}
+    public static void closeTight() {setClawPos(0.28);}
     public static void open() {setClawPos(0.6);}
 
 
@@ -151,8 +156,6 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
 
-        double armExt = extenderMotorLeft.getCurrentPosition();
-
 
 
 
@@ -166,13 +169,14 @@ public class Stage1Subsystem extends SubsystemBase {
 
         //Extension motor
         //extendController.setPID(pExtend,iExtend,dExtend);
-        extendPower = Math.max(-1, Math.min(1, extendController.calculate(extenderMotorLeft.getCurrentPosition(), extTarget)));
+        extendPower = Math.max(-.8, Math.min(.8, extendController.calculate(extenderMotorLeft.getCurrentPosition(), extTarget)));
 
         clawServo.setPosition(clawPos);
         clawWristServo.setPosition(clawWristPos);
         clawTwistServo.setPosition(clawTwistPos);
 
         extenderMotorLeft.setPower(extendPower);
-        isBusy = !( armExt >= extTarget - 10 && armExt <= extTarget + 10);
+        extenderMotorRight.setPower(extendPower);
+        isBusy = !( extPos >= extTarget - 10 && extPos <= extTarget + 10);
     }
 }

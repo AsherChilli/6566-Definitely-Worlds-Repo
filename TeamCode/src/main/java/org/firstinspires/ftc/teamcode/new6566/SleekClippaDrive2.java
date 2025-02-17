@@ -27,9 +27,10 @@ public class SleekClippaDrive2 extends OpMode {
 
     Follower follower;
 
+
     @Override
     public void init() {
-        r.init_robot(this);
+        //r.init_robot(this);
         follower = new Follower(hardwareMap);
         stage2 = new Stage2Subsystem(hardwareMap);
         stage1 = new Stage1Subsystem(hardwareMap);
@@ -51,24 +52,46 @@ public class SleekClippaDrive2 extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         //Extend or retract arm
 
-        Stage1Subsystem.setPos(Stage1Subsystem.getExtenderPos() + gamepad1.right_trigger * -20 + gamepad1.left_trigger * 20);
+        Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * -20 + gamepad1.left_trigger * 20);
 
         if (gamepad1.left_bumper) Stage1Subsystem.close();
         else if (gamepad1.right_bumper) Stage1Subsystem.open();
+//        if (gamepad1.dpad_left)
 
-        if(gamepad1.triangle){stage2.readyClipRack();}
-        if(gamepad1.square){stage2.clipRack();}
+        if(gamepad1.triangle){stage2.setStage2(stage2.readyPickFromRack);}
+        if(gamepad1.square){stage2.setStage2(stage2.pickFromRack);}
+        if(gamepad2.dpad_down){stage2.setStage2(stage2.readyClipVal);}
+        if (gamepad2.dpad_right) {
+            stage2.setStage2(stage2.clipVal);
+            Stage1Subsystem.closeTight();
+            Stage1Subsystem.setClawWristPos(0);
+
+        }
+        if(gamepad1.circle){stage2.raiseCams();}
+        else stage2.lowerCams();
+        if(gamepad1.dpad_down) {
+            Stage1Subsystem.setClawWristPos(1);
+        } else if (gamepad1.dpad_left) {
+            Stage1Subsystem.setClawWristPos(0);
+        }
+
+//        if (gamepad2.a) Stage2Subsystem.holdClose();
+//        else if (gamepad2.b) Stage2Subsystem.holdOpenMax();
 
         Stage1Subsystem.update();
         Stage2Subsystem.update();
+        stage2.stage2Updater();
+        follower.update();
 
-        
 
 
+        telemetry.addData("Ext Pos", Stage1Subsystem.getExtenderPos());
+        telemetry.addData("Ext Target", Stage1Subsystem.getExtTarget());
 
-        telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
-        telemetry.addLine("Extendo Position: " + String.valueOf(r.ExtendRight.getCurrentPosition()) );
-        telemetry.addLine("Twist Position: " + String.valueOf(r.GameTwist.getPosition()) );
+//        telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
+//        telemetry.addLine("Extendo Position: " + String.valueOf(r.ExtendLeft.getCurrentPosition()) );
+//        telemetry.addLine("Twist Position: " + String.valueOf(r.GameTwist.getPosition()) );
 
     }
+
 }

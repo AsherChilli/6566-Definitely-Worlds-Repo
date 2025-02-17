@@ -28,6 +28,12 @@ public class SleekClippaDrive extends OpMode {
         r.init_robot(this);
    }
 
+   @Override
+   public void init_loop() {
+        telemetry.addData("arm extension", r.ExtendLeft.getCurrentPosition());
+        telemetry.update();
+   }
+
     @Override
     public void loop() {
 

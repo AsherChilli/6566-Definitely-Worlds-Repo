@@ -3,14 +3,13 @@ package org.firstinspires.ftc.teamcode.Stage2;
 
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Stage1.Tuning.ArmTuner;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 //import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stage2Subsystem extends SubsystemBase {
@@ -25,6 +24,15 @@ public class Stage2Subsystem extends SubsystemBase {
 
     private static Servo clipRackLeft;
     private static Servo clipRackRight;
+
+    private int stage2State = 0;
+
+    public final int pickFromRack = 1000;
+    public final int readyPickFromRack = 900;
+    public final int readyClipVal = 1100;
+    public final int clipVal = 1200;
+
+    private Timer stage2timer = new Timer();
 
 
 
@@ -54,6 +62,7 @@ public class Stage2Subsystem extends SubsystemBase {
 
     private static double clawPos;
     private static double clawWristPos;
+    private static double rackPos;
 
 
     private static final int angMin = 0;
@@ -70,8 +79,8 @@ public class Stage2Subsystem extends SubsystemBase {
 
         AngleMotor = hMap.get(DcMotorEx.class, "CAR");
 
-        clipHold = hMap.get(Servo.class, "CWR");
-        clipWrist = hMap.get(Servo.class, "CLH");
+        clipHold = hMap.get(Servo.class, "CLH");
+        clipWrist = hMap.get(Servo.class, "CWR");
 
         clipRackLeft = hMap.get(Servo.class, "CCL");
         clipRackRight = hMap.get(Servo.class, "CCR");
@@ -83,6 +92,8 @@ public class Stage2Subsystem extends SubsystemBase {
         AngleMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         AngleMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        AngleMotor.setTargetPosition(0);
+        AngleMotor.setPower(.5);
         AngleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
@@ -131,46 +142,63 @@ public class Stage2Subsystem extends SubsystemBase {
 
     public void raiseCams(){
 
-        clipRackLeft.setPosition(.7);
-        clipRackRight.setPosition(.7);
+
+        rackPos = 0;
 
     }
     public void lowerCams(){
 
-        clipRackLeft.setPosition(.4);
-        clipRackRight.setPosition(.4);
+        rackPos = 0.7;
+
+
 
     }
 
     //Make sure everything for getting a clip is in the right place
     public void readyClipRack() {
         lowerCams();
-        clipHold.setPosition(0.475);
-        AngleMotor.setTargetPosition(-670 + 1493);
-        AngleMotor.setPower(.7);
-        AngleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //setClawPos(0.5);
+        setAngTarget(-670 + 1493);
+        setAngPower(.7);
     }
     //Get the clip from the clip rack
     public void clipRack() {
         //Grab clip in thingy
-        clipWrist.setPosition(.6);
-        time = runtime.time();
-        while (runtime.time() - time <= .25) {
-            continue;
-        } if (runtime.time() - time > .25) {
-            AngleMotor.setTargetPosition(-300 + 1493);
-            AngleMotor.setPower(.4);
-        } else if(runtime.time() - time > .75){
-            clipHold.setPosition(.3);
-        }
+        holdOpenMax();
+        setClawWristPos(.65);
     }
-    public void readyClip() {
-
-
-
+    public void clipRack2() {
+        setAngTarget(1493);
+        setAngPower(.3);
+    }
+    public void clipRack3(){
+        setClawWristPos(.5);
+    }
+    public void clipRack4() {
+        holdClose();
+    }
+    public void clipRack5() {
+        setClawWristPos(.6);
+        holdCloseTight();
+    }
+    public void clipRack6() {
+        setAngTarget(-300 + 1493);
+        setAngPower(.4);
+    }
+    public void readyClip(){
+        setAngTarget(-300 + 1493);
+        setClawWristPos(.925);
+    }
+    public void readyClip2() {
+        setAngTarget(55 + 1493);
+        setClawWristPos(.81);
+    }
+    public void readyClip3() {
+        setClawWristPos(.825);
     }
     public void clip() {
-
+        holdCloseTight();
+        setClawWristPos(1);
     }
     public void readyScore() {
 
@@ -198,7 +226,8 @@ public class Stage2Subsystem extends SubsystemBase {
 
         angTarget =  Math.max(angMin, Math.min(angMax, angTarget));
         clawPos = Math.max(0, Math.min(1, clawPos));
-        clawWristPos = Math.max(angPos < 200 ? 0.7 : 0, Math.min(1, clawWristPos));
+        clawWristPos = Math.max( 0, Math.min(1, clawWristPos));
+        rackPos = Math.max(0,Math.min(0.7, rackPos));
 
 
         //Extension motor
@@ -206,8 +235,102 @@ public class Stage2Subsystem extends SubsystemBase {
 //        extendPower = Math.max(-1, Math.min(1, extendController.calculate(AngleMotor.getCurrentPosition(), angTarget)));
         clipHold.setPosition(clawPos);
         clipWrist.setPosition(clawWristPos);
+        AngleMotor.setTargetPosition(angTarget);
+
+        clipRackLeft.setPosition(rackPos);
+        clipRackRight.setPosition(1.2-rackPos);
 
         AngleMotor.setPower(angPower);
         isBusy = !( angPos >= angTarget - 10 && angPos <= angTarget + 10);
     }
+
+
+    public void setStage2(int status) {
+        stage2State = status;
+        stage2timer.resetTimer();
+    }
+    public void stage2Updater() {
+        switch (stage2State) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case readyPickFromRack:
+                readyClipRack();
+                break;
+            case pickFromRack:
+                if (stage2timer.getElapsedTime() < 1000) {
+                    clipRack();
+                } else if (stage2timer.getElapsedTime() < 2000) {
+                    clipRack2();
+                } else if (stage2timer.getElapsedTime() < 3000) {
+                    clipRack3();
+                } else if (stage2timer.getElapsedTime() < 4000) {
+                    clipRack4();
+                } else if (stage2timer.getElapsedTime() < 5000) {
+                    clipRack5();
+                } else if (stage2timer.getElapsedTime() < 6000) {
+                    clipRack6();
+                }
+                break;
+            case readyClipVal:
+                if (stage2timer.getElapsedTime() < 1000) readyClip();
+                else readyClip2();
+                break;
+            case clipVal:
+                clip();
+                break;
+
+
+//            case 1010:
+//                Stage2Subsystem.setAngTarget(-670 + 1493);
+//                Stage2Subsystem.setAngPower(0.7);
+//                Stage2Subsystem.setClawPos(0);
+//                if (Stage2Subsystem.getAngPos() == -670 + 1493 && stage2timer.getElapsedTime() > 1500) {
+//                    Stage2Subsystem.setClawPos(0.5);
+//                    Stage2Subsystem.setAngTarget(-600 + 1493);
+//                } else if (stage2timer.getElapsedTime() > 2500) {
+//                    setStage2(1001);
+//                }
+//                break;
+//
+//
+//            case 1001:
+//                Stage2Subsystem.holdOpenMax();
+//                Stage2Subsystem.setClawWristPos(0.65);
+//
+//
+//                break;
+//            case 1002:
+//                Stage2Subsystem.setClawWristPos(0.65);
+//                Stage2Subsystem.holdOpenMax();
+//                Stage2Subsystem.setAngTarget(0 + 1493);
+//                Stage2Subsystem.setAngPower(0.3);
+//                break;
+//
+//            case 1003:
+//                Stage2Subsystem.setClawPos(.46);
+//                Stage2Subsystem.setClawWristPos(.5);
+//                if (stage2timer.getElapsedTime() > 250) {
+//                    Stage2Subsystem.holdClose();
+//                }
+//                break;
+//            case 1004:
+//                Stage2Subsystem.setClawWristPos(.6);
+//                Stage2Subsystem.holdCloseTight();
+//                if (stage2timer.getElapsedTime() > 250) {
+//                    Stage2Subsystem.setAngTarget(-300 + 1493);
+//                    Stage2Subsystem.setAngPower(.4);
+//                }
+//                break;
+//            case 1005:
+//                Stage2Subsystem.setClawWristPos(.825);
+//                break;
+//            case 1006:
+//                Stage2Subsystem.setAngTarget(55 + 1493);
+//                break;
+        }
+    }
+
 }
+
