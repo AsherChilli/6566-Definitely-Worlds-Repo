@@ -256,7 +256,8 @@ public class Stage2Subsystem extends SubsystemBase {
             case 1:
                 break;
             case readyPickFromRack:
-                readyClipRack();
+                if (stage2timer.getElapsedTime() < 1000) readyClipRack();
+                else setStage2(0);
                 break;
             case pickFromRack:
                 if (stage2timer.getElapsedTime() < 1000) {
@@ -271,14 +272,17 @@ public class Stage2Subsystem extends SubsystemBase {
                     clipRack5();
                 } else if (stage2timer.getElapsedTime() < 6000) {
                     clipRack6();
-                }
+                } else setStage2(0);
                 break;
             case readyClipVal:
                 if (stage2timer.getElapsedTime() < 1000) readyClip();
-                else readyClip2();
+                else if (stage2timer.getElapsedTime() < 2000) readyClip2();
+                //else if (stage2timer.getElapsedTime() < 3000) readyClip3();
+                else setStage2(0);
                 break;
             case clipVal:
-                clip();
+                if (stage2timer.getElapsedTime() < 1000) clip();
+                else setStage2(0);
                 break;
 
 
