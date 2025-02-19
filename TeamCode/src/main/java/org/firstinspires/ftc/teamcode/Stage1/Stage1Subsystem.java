@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Stage1;
 
 
 
+import android.util.Size;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -10,6 +12,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.OpenCV.Processors.sampleProcessor;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.opencv.core.RotatedRect;
 //import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stage1Subsystem extends SubsystemBase {
@@ -24,7 +31,12 @@ public class Stage1Subsystem extends SubsystemBase {
     private static ColorSensor colorSensor = null;
 
 
+    static VisionPortal visionPortal;
 
+    sampleProcessor processor = new sampleProcessor();
+
+    //Some variable for color
+    static sampleProcessor.Color color = sampleProcessor.Color.RED;
 
 
 
@@ -73,7 +85,7 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristServo = hMap.get(Servo.class, "GMW");
         clawTwistServo = hMap.get(Servo.class, "GMT");
 
-        colorSensor = hMap.get(ColorSensor.class, "ColorSensor");
+        colorSensor = hMap.get(ColorSensor.class, "colorsensor");
 
 
 
@@ -91,6 +103,25 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
         extendController.setPID(pExtend, iExtend, dExtend);
+
+
+
+        visionPortal = new VisionPortal.Builder()
+                //Get camera from hMap
+                .setCamera(hMap.get(WebcamName.class, "Webcam 1"))
+                //Add all needed processors (hand written)
+                .addProcessor(processor)
+                //Set camera resolution
+                .setCameraResolution(new Size(640, 480))
+                //No idea
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                //Enable streaming to Dhub and FTC Dashboard (?)
+                //TODO: Set to false to reduce cpu usage
+                .enableLiveView(true)
+                //If all proccesors disabled, stop streaming
+                .setAutoStopLiveView(true)
+                //finish
+                .build();
 
     }
 
@@ -118,7 +149,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
     public static double getClawPos(){return clawPos;}
     public static double getClawWristPos(){return clawWristPos;}
-    public static double getClawAnglePos(){return clawTwistPos;}
+    public static double getClawTwistPos(){return clawTwistPos;}
     public static double getRed(){ return  colorSensor.red();}
     public static double getBlue(){return colorSensor.blue();};
     public static double getGreen(){return colorSensor.green();}
@@ -129,7 +160,7 @@ public class Stage1Subsystem extends SubsystemBase {
     public static void setClawWristPos(double pos) {
         clawWristPos = pos;
     }
-    public static void setClawAnglePos(double pos) {
+    public static void setClawTwistPos(double pos) {
         clawTwistPos = pos;
     }
 
@@ -144,6 +175,15 @@ public class Stage1Subsystem extends SubsystemBase {
     public static void closeTight() {setClawPos(0.28);}
     public static void open() {setClawPos(0.6);}
 
+    public static void setRed() {color = sampleProcessor.Color.RED;}
+    public static void setBlue() {color = sampleProcessor.Color.BLUE;}
+
+    public static sampleProcessor.Color getColor() {
+        return color;
+    }
+
+    public static void stopStream() {visionPortal.stopStreaming();}
+    public static void startStream() {visionPortal.resumeStreaming();}
 
     public static void setExtendPID(double pExtend, double iExtend, double dExtend){
         extendController.setPID(pExtend, iExtend, dExtend);
@@ -158,10 +198,19 @@ public class Stage1Subsystem extends SubsystemBase {
     // ----------------
 
 
+    public static void pickupSample() {
+        RotatedRect rect = sampleProcessor.getRect();
+        if (sampleProcessor.getWidth() > 450) {
+            setClawTwistPos(0);
+        } else setClawTwistPos(0.625);
+    }
+
 
     public static void update() {
         double extendPower;
         extPos = extenderMotorLeft.getCurrentPosition();
+
+        sampleProcessor.setColor(color);
 
 
 

@@ -27,14 +27,14 @@ public class Stage2Subsystem extends SubsystemBase {
     private static Servo clipRackLeft;
     private static Servo clipRackRight;
 
-    private int stage2State = 0;
+    private static int stage2State = 0;
 
-    public final int pickFromRack = 1000;
-    public final int readyPickFromRack = 900;
-    public final int readyClipVal = 1100;
-    public final int clipVal = 1200;
+    public static final int pickFromRack = 1000;
+    public static final int readyPickFromRack = 900;
+    public static final int readyClipVal = 1100;
+    public static final int clipVal = 1200;
 
-    private Timer stage2timer = new Timer();
+    private static Timer stage2timer = new Timer();
 
 
 
@@ -150,62 +150,55 @@ public class Stage2Subsystem extends SubsystemBase {
     public static void holdCloseTight() {clawPos = 0.3;}
 
     public void raiseCams(){
-
-
         rackPos = 0;
-
     }
-    public void lowerCams(){
-
+    public static void lowerCams(){
         rackPos = 0.7;
-
-
-
     }
 
     //Make sure everything for getting a clip is in the right place
-    public void readyClipRack() {
+    public static void readyClipRack() {
         lowerCams();
         //setClawPos(0.5);
         setAngTarget(-670 + 1493);
         setAngPower(.7);
     }
     //Get the clip from the clip rack
-    public void clipRack() {
+    public static void clipRack() {
         //Grab clip in thingy
         holdOpenMax();
         setClawWristPos(.65);
     }
-    public void clipRack2() {
+    public static void clipRack2() {
         setAngTarget(1493);
         setAngPower(.3);
     }
-    public void clipRack3(){
+    public static void clipRack3(){
         setClawWristPos(.5);
     }
-    public void clipRack4() {
+    public static void clipRack4() {
         holdClose();
     }
-    public void clipRack5() {
+    public static void clipRack5() {
         setClawWristPos(.6);
         holdCloseTight();
     }
-    public void clipRack6() {
+    public static void clipRack6() {
         setAngTarget(-300 + 1493);
         setAngPower(.4);
     }
-    public void readyClip(){
+    public static void readyClip(){
         setAngTarget(-300 + 1493);
         setClawWristPos(.925);
     }
-    public void readyClip2() {
+    public static void readyClip2() {
         setAngTarget(55 + 1493);
         setClawWristPos(.81);
     }
     public void readyClip3() {
         setClawWristPos(.825);
     }
-    public void clip() {
+    public static void clip() {
         holdCloseTight();
         setClawWristPos(1);
     }
@@ -257,11 +250,11 @@ public class Stage2Subsystem extends SubsystemBase {
     }
 
 
-    public void setStage2(int status) {
+    public static void setStage2(int status) {
         stage2State = status;
         stage2timer.resetTimer();
     }
-    public void stage2Updater() {
+    public static void stage2Updater() {
         switch (stage2State) {
             case 0:
                 break;

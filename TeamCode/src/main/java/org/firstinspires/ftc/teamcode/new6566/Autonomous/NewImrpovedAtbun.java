@@ -27,7 +27,6 @@ public class NewImrpovedAtbun extends OpMode {
     Poses poses = new Poses();
 
     Follower follower;
-    VisionPortal visionPortal;
 
     Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
     Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
@@ -46,10 +45,7 @@ public class NewImrpovedAtbun extends OpMode {
     private Timer pathTimer = new Timer();
 
     //Class of sampleDetection
-    sampleProcessor processor = new sampleProcessor();
 
-    //Some variable for color
-    sampleProcessor.Color color = sampleProcessor.Color.RED;
 
     //For 1 time init thingy
     @Override
@@ -62,22 +58,7 @@ public class NewImrpovedAtbun extends OpMode {
         buildPaths();
 
         //Vision Portal INIT
-        visionPortal = new VisionPortal.Builder()
-                //Get camera from hMap
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                //Add all needed processors (hand written)
-                .addProcessor(processor)
-                //Set camera resolution
-                .setCameraResolution(new Size(640, 480))
-                //No idea
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                //Enable streaming to Dhub and FTC Dashboard (?)
-                //TODO: Set to false to reduce cpu usage
-                .enableLiveView(true)
-                //If all proccesors disabled, stop streaming
-                .setAutoStopLiveView(true)
-                //finish
-                .build();
+
     }
 
     //For multiple loopy things
@@ -85,11 +66,10 @@ public class NewImrpovedAtbun extends OpMode {
     public void init_loop(){
 
         //Determines whether we are RED or BLUE
-        if(gamepad1.dpad_up){color = sampleProcessor.Color.RED;}
-        else if(gamepad1.dpad_down){color = sampleProcessor.Color.BLUE;}
+        if(gamepad1.dpad_up){Stage1Subsystem.setRed();}
+        else if(gamepad1.dpad_down){Stage1Subsystem.setBlue();}
 
         //Sets the processor to be for that color
-        sampleProcessor.setColor(color);
 
 
 
@@ -97,7 +77,7 @@ public class NewImrpovedAtbun extends OpMode {
         telemetry.addLine("For changing between RED and BLUE:");
         telemetry.addLine("Use DPAD_UP for RED");
         telemetry.addLine("Use DPAD_DOWN for BLUE");
-        telemetry.addData("Current Color: ", color);
+        telemetry.addData("Current Color: ", Stage1Subsystem.getColor());
         telemetry.update();
     }
 
@@ -105,6 +85,9 @@ public class NewImrpovedAtbun extends OpMode {
     public void loop() {
         //I loveee my autonomous path update
         autonomousPathUpdate();
+        Stage1Subsystem.update();
+        Stage2Subsystem.update();
+        Stage2Subsystem.
 
 
         telemetry.addData("Path State: ", pathState);

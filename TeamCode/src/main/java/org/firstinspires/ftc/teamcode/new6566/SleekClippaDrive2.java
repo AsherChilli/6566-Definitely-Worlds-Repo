@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
@@ -61,8 +60,8 @@ public class SleekClippaDrive2 extends OpMode {
 
         if(gamepad1.dpad_right) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() + 0.01);}
         else if (gamepad1.dpad_left) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() - 0.01);}
-        if (gamepad1.dpad_up) {Stage1Subsystem.setClawAnglePos(Stage1Subsystem.getClawAnglePos() + 0.01);}
-        else if (gamepad1.dpad_down) {Stage1Subsystem.setClawAnglePos(Stage1Subsystem.getClawAnglePos() - 0.01);}
+        if (gamepad1.dpad_up) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() + 0.01);}
+        else if (gamepad1.dpad_down) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() - 0.01);}
 
 
         if (gamepad2.dpad_up) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + 10);
