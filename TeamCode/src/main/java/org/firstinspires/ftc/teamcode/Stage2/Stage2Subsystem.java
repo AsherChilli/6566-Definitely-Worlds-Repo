@@ -202,9 +202,9 @@ public class Stage2Subsystem extends SubsystemBase {
         holdCloseTight();
         setClawWristPos(1);
     }
-    //public static void clipFinal() {
-        //setClipServoPos();
-    //}
+    public static void clipFinal() {setClipServoPos(.383);}
+    public static void clipPress() {setClipServoPos(.8);}
+
     public void readyScore() {
 
     }
@@ -291,6 +291,8 @@ public class Stage2Subsystem extends SubsystemBase {
             case clipVal:
                 if (stage2timer.getElapsedTime() < 1000) clip();
                 else setStage2(0);
+                if (stage2timer.getElapsedTime() < 1500) clipFinal();
+                else clipPress();
                 break;
 
 
