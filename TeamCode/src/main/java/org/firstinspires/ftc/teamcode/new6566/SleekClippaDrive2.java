@@ -101,6 +101,8 @@ public class SleekClippaDrive2 extends OpMode {
         telemetry.addData("red", Stage1Subsystem.getRed());
         telemetry.addData("blue", Stage1Subsystem.getBlue());
         telemetry.addData("green", Stage1Subsystem.getGreen());
+        telemetry.addData("alpha", Stage1Subsystem.getAlpha());
+        telemetry.addData("distance", Stage1Subsystem.getDistance());
 
 //        telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
 //        telemetry.addLine("Extendo Position: " + String.valueOf(r.ExtendLeft.getCurrentPosition()) );

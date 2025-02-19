@@ -10,10 +10,12 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.OpenCV.Processors.sampleProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.RotatedRect;
@@ -29,6 +31,7 @@ public class Stage1Subsystem extends SubsystemBase {
     private static Servo clawTwistServo = null;
 
     private static ColorSensor colorSensor = null;
+    private static DistanceSensor distanceSensor = null;
 
 
     static VisionPortal visionPortal;
@@ -86,6 +89,7 @@ public class Stage1Subsystem extends SubsystemBase {
         clawTwistServo = hMap.get(Servo.class, "GMT");
 
         colorSensor = hMap.get(ColorSensor.class, "colorsensor");
+        distanceSensor = hMap.get(DistanceSensor.class, "colorSensor");
 
 
 
@@ -153,6 +157,8 @@ public class Stage1Subsystem extends SubsystemBase {
     public static double getRed(){ return  colorSensor.red();}
     public static double getBlue(){return colorSensor.blue();};
     public static double getGreen(){return colorSensor.green();}
+    public static double getAlpha(){return colorSensor.alpha();}
+    public static double getDistance(){return distanceSensor.getDistance(DistanceUnit.INCH);};
 
     public static void setClawPos(double pos) {
         clawPos = pos;
