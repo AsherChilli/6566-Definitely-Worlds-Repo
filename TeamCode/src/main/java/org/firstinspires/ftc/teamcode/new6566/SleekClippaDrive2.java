@@ -54,19 +54,21 @@ public class SleekClippaDrive2 extends OpMode {
 
         Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * 30 + gamepad1.left_trigger * -30);
         //Stage1Subsystem.pickupSample();
-        if (gamepad1.left_bumper) Stage1Subsystem.close();
-        else if (gamepad1.right_bumper) Stage1Subsystem.open();
+        if (gamepad1.left_bumper) Stage1Subsystem.open();
+        else if (gamepad1.right_bumper) Stage1Subsystem.close();
 
+        if (gamepad1.cross) Stage1Subsystem.up();
+        if (gamepad1.triangle) Stage1Subsystem.down();
 
         if(gamepad1.dpad_right) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() + 0.01);}
         else if (gamepad1.dpad_left) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() - 0.01);}
         if (gamepad1.dpad_up) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() + 0.01);}
         else if (gamepad1.dpad_down) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() - 0.01);}
 
-//        if (gamepad1.cross) {
-//            Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
-//
-//        }
+        if (gamepad1.cross) {
+            Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
+
+        }
 
 
         if (gamepad2.dpad_up) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + 10);
@@ -101,18 +103,20 @@ public class SleekClippaDrive2 extends OpMode {
         telemetry.addData("Ext Pos", Stage1Subsystem.getExtenderPos());
         telemetry.addData("Ext Target", Stage1Subsystem.getExtTarget());
         telemetry.addData("Clip servo pos", Stage2Subsystem.getClipServoPos());
-//        telemetry.addData("red", Stage1Subsystem.getRed());
-//        telemetry.addData("blue", Stage1Subsystem.getBlue());
-//        telemetry.addData("green", Stage1Subsystem.getGreen());
-//        telemetry.addData("alpha", Stage1Subsystem.getAlpha());
-//        telemetry.addData("distance", Stage1Subsystem.getDistance());
-//
-        telemetry.addData("Game Claw Wrist Pos", Stage1Subsystem.getClawWristPos());
-        telemetry.addData("Game Claw Twist Pos", Stage1Subsystem.getClawTwistPos());
-        telemetry.addData("Clip Claw Wrist Pos", Stage2Subsystem.getClawWristPos());
+        //telemetry.addData("red", Stage1Subsystem.getRed());
+        //telemetry.addData("blue", Stage1Subsystem.getBlue());
+        //telemetry.addData("green", Stage1Subsystem.getGreen());
+        //telemetry.addData("alpha", Stage1Subsystem.getAlpha());
+        //telemetry.addData("distance", Stage1Subsystem.getDistance());
 
+        telemetry.addData("Claw Pos", Stage1Subsystem.getClawPos());
+        telemetry.addData("Claw Wrist Pos", Stage1Subsystem.getClawWristPos());
+        telemetry.addData("Claw Twist Pos", Stage1Subsystem.getClawTwistPos());
 
-    //        telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
+        telemetry.addData("Clip Claw Wrist", Stage2Subsystem.getClawWristPos());
+        telemetry.addData("Clip Claw", Stage2Subsystem.getClawPos());
+
+//        telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
 //        telemetry.addLine("Extendo Position: " + String.valueOf(r.ExtendLeft.getCurrentPosition()) );
 //        telemetry.addLine("Twist Position: " + String.valueOf(r.GameTwist.getPosition()) );
 
