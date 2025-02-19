@@ -88,8 +88,8 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristServo = hMap.get(Servo.class, "GMW");
         clawTwistServo = hMap.get(Servo.class, "GMT");
 
-        colorSensor = hMap.get(ColorSensor.class, "colorsensor");
-        distanceSensor = hMap.get(DistanceSensor.class, "colorSensor");
+        colorSensor = hMap.get(ColorSensor.class, "ColorSensor");
+        distanceSensor = hMap.get(DistanceSensor.class, "ColorSensor");
 
 
 
