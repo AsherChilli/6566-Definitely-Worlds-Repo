@@ -193,7 +193,7 @@ public class Stage2Subsystem extends SubsystemBase {
     }
     public static void readyClip2() {
         setAngTarget(55 + 1493);
-        setClawWristPos(.81);
+        setClawWristPos(.785);
     }
     public void readyClip3() {
         setClawWristPos(.825);
@@ -202,6 +202,9 @@ public class Stage2Subsystem extends SubsystemBase {
         holdCloseTight();
         setClawWristPos(1);
     }
+    //public static void clipFinal() {
+        //setClipServoPos();
+    //}
     public void readyScore() {
 
     }

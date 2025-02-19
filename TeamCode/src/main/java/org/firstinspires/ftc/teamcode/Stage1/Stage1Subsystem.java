@@ -184,6 +184,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
     public static void up() {setClawWristPos(0.65);}
     public static void down() {setClawWristPos(1);}
+
     public static void setRed() {color = sampleProcessor.Color.RED;}
     public static void setBlue() {color = sampleProcessor.Color.BLUE;}
 

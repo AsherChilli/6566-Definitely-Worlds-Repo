@@ -59,6 +59,7 @@ public class SleekClippaDrive2 extends OpMode {
 
         if (gamepad1.cross) Stage1Subsystem.up();
         if (gamepad1.triangle) Stage1Subsystem.down();
+        if (gamepad1.circle) Stage1Subsystem.setPos(255);
 
         if(gamepad1.dpad_right) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() + 0.01);}
         else if (gamepad1.dpad_left) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() - 0.01);}
