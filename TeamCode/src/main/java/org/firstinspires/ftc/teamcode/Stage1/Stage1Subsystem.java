@@ -177,10 +177,13 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristPos = 0.7;
         clawTwistPos = 0.5;
     }
-    public static void close() {setClawPos(0.42);}
+    public static void close() {setClawPos(0.455);} // .42 previously
     public static void closeTight() {setClawPos(0.28);}
     public static void open() {setClawPos(0.6);}
 
+
+    public static void up() {setClawWristPos(0.65);}
+    public static void down() {setClawWristPos(1);}
     public static void setRed() {color = sampleProcessor.Color.RED;}
     public static void setBlue() {color = sampleProcessor.Color.BLUE;}
 
@@ -227,7 +230,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
 
-        // CLamping
+        // Clamping
 
         extTarget =  Math.max(extMin, Math.min(extMax, extTarget));
         clawPos = Math.max(0, Math.min(1, clawPos));
