@@ -177,7 +177,7 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristPos = 0.7;
         clawTwistPos = 0.5;
     }
-    public static void close() {setClawPos(0.42);}
+    public static void close() {setClawPos(0.45);}
     public static void closeTight() {setClawPos(0.28);}
     public static void open() {setClawPos(0.6);}
 
@@ -207,7 +207,7 @@ public class Stage1Subsystem extends SubsystemBase {
     public static void pickupSample() {
         //RotatedRect rect = sampleProcessor.getRect();
 
-        if (getRed() > 250 && getDistance() < 1.32) {
+        if (getRed() > 285 && getBlue() < 403 && getDistance() < 1.32) {
             close();
         }
         if (sampleProcessor.getWidth() > 450) {
