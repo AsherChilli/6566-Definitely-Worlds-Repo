@@ -110,9 +110,11 @@ public class SleekClippaDrive2 extends OpMode {
         //telemetry.addData("alpha", Stage1Subsystem.getAlpha());
         //telemetry.addData("distance", Stage1Subsystem.getDistance());
 
-        telemetry.addData("Claw Pos", Stage1Subsystem.getClawPos());
-        telemetry.addData("Claw Wrist Pos", Stage1Subsystem.getClawWristPos());
-        telemetry.addData("Claw Twist Pos", Stage1Subsystem.getClawTwistPos());
+        telemetry.addData("Arm Pos", Stage2Subsystem.getAngTarget());
+
+        //telemetry.addData("Claw Pos", Stage1Subsystem.getClawPos());
+        //telemetry.addData("Claw Wrist Pos", Stage1Subsystem.getClawWristPos());
+        //telemetry.addData("Claw Twist Pos", Stage1Subsystem.getClawTwistPos());
 
         telemetry.addData("Clip Claw Wrist", Stage2Subsystem.getClawWristPos());
         telemetry.addData("Clip Claw", Stage2Subsystem.getClawPos());
