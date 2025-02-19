@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 import org.firstinspires.ftc.teamcode.Stage2.Stage2Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @TeleOp(name="Awesome Drive", group = "TeleOp")
 public class SleekClippaDrive2 extends OpMode {
@@ -23,6 +24,12 @@ public class SleekClippaDrive2 extends OpMode {
     double holdClose = .35;//.3
     double holdCloseTight = .3;//.2
     boolean clipping = false;
+
+    int state = 0;
+
+    final int clip = 1000;
+
+    Timer timer = new Timer();
 
     Follower follower;
 
@@ -78,14 +85,26 @@ public class SleekClippaDrive2 extends OpMode {
         Stage2Subsystem.setClipServoPos(Stage2Subsystem.getClipServoPos() + gamepad2.left_stick_y* 0.01);
         Stage2Subsystem.setClawWristPos(Stage2Subsystem.getClawWristPos() + gamepad2.right_stick_y * 0.01);
 
-        if(gamepad2.triangle){stage2.setStage2(stage2.readyPickFromRack);}
-        if(gamepad2.square){stage2.setStage2(stage2.pickFromRack);}
-        if(gamepad2.cross){stage2.setStage2(stage2.readyClipVal);}
-        if (gamepad2.circle) {
-            stage2.setStage2(stage2.clipVal);
-            Stage1Subsystem.closeTight();
-            Stage1Subsystem.setClawWristPos(0);
+//        if(gamepad2.triangle){
+//            Stage2Subsystem.setStage2(Stage2Subsystem.readyPickFromRack);}
+//        if(gamepad2.square){
+//            Stage2Subsystem.setStage2(Stage2Subsystem.pickFromRack);}
+//        if(gamepad2.cross){
+//            Stage2Subsystem.setStage2(Stage2Subsystem.readyClipVal);}
+//        if (gamepad2.circle) {
+//            Stage2Subsystem.setStage2(Stage2Subsystem.clipVal);
+//            Stage1Subsystem.closeTight();
+//            Stage1Subsystem.setClawWristPos(0);
+//
+//        }
 
+
+        //TODO: uncomment to test full clip with no input
+        if(gamepad2.cross) {
+            setState(clip);
+        }
+        if(gamepad2.triangle) {
+            setState(0);
         }
         if(gamepad2.dpad_left){
             Stage2Subsystem.raiseCams();}
@@ -99,6 +118,7 @@ public class SleekClippaDrive2 extends OpMode {
         Stage2Subsystem.update();
         Stage2Subsystem.stage2Updater();
         follower.updatePose();
+        autonomousUpdate();
 
 
 
@@ -124,6 +144,60 @@ public class SleekClippaDrive2 extends OpMode {
 //        telemetry.addLine("Extendo Position: " + String.valueOf(r.ExtendLeft.getCurrentPosition()) );
 //        telemetry.addLine("Twist Position: " + String.valueOf(r.GameTwist.getPosition()) );
 
+    }
+
+    void setState(int num) {
+        state = num;
+        timer.resetTimer();
+    }
+
+    void autonomousUpdate() {
+        switch (state) {
+            case 0:
+                break;
+            case clip:
+                Stage2Subsystem.setStage2(Stage2Subsystem.readyPickFromRack);
+                Stage1Subsystem.up();
+                setState(1001);
+                break;
+            case 1001:
+                if (timer.getElapsedTime() > 2500) {
+                    setState(1002);
+                }
+                break;
+            case 1002:
+                Stage2Subsystem.setStage2(Stage2Subsystem.pickFromRack);
+                Stage1Subsystem.setPos(500);
+                setState(1003);
+                break;
+            case 1003:
+                if (timer.getElapsedTime() > 6000) {
+                    setState(1004);
+                }
+                break;
+            case 1004:
+                Stage2Subsystem.setStage2(Stage2Subsystem.readyClipVal);
+                setState(1005);
+                break;
+            case 1005:
+                if (timer.getElapsedTime() < 2500) {}
+                else if (timer.getElapsedTime() < 3500) {Stage1Subsystem.setPos(255);}
+                else {
+                    setState(1006);
+                }
+                break;
+            case 1006:
+                Stage2Subsystem.setStage2(Stage2Subsystem.clipVal);
+                Stage1Subsystem.closeTight();
+                Stage1Subsystem.setClawWristPos(0);
+                if (timer.getElapsedTime() > 7000) {
+                    Stage1Subsystem.open();
+                    Stage1Subsystem.up();
+                    Stage1Subsystem.setPos(600);
+                    setState(0);
+                }
+                break;
+        }
     }
 
 }

@@ -242,6 +242,7 @@ public class Stage1Subsystem extends SubsystemBase {
         clawPos = Math.max(0, Math.min(1, clawPos));
         clawTwistPos = Math.max(0, Math.min(1, clawTwistPos));
         clawWristPos = Math.max(0.4, Math.min(extPos < 400 ? 0.7 : 1, clawWristPos));
+        if (extPos < 400) { clawTwistPos = .625;}
 
 
         //Extension motor
