@@ -87,7 +87,6 @@ public class NewImrpovedAtbun extends OpMode {
         autonomousPathUpdate();
         Stage1Subsystem.update();
         Stage2Subsystem.update();
-        Stage2Subsystem.
 
 
         telemetry.addData("Path State: ", pathState);

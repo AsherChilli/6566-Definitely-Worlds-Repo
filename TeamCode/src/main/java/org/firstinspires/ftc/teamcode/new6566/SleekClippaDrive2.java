@@ -85,7 +85,7 @@ public class SleekClippaDrive2 extends OpMode {
 //        else if (gamepad2.b) Stage2Subsystem.holdOpenMax();
 
 
-
+        Stage1Subsystem.pickupSample();
         Stage1Subsystem.update();
         Stage2Subsystem.update();
         stage2.stage2Updater();

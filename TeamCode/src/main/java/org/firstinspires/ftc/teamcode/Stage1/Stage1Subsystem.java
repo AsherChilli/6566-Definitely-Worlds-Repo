@@ -205,10 +205,14 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
     public static void pickupSample() {
-        RotatedRect rect = sampleProcessor.getRect();
-        if (sampleProcessor.getWidth() > 450) {
-            setClawTwistPos(0);
-        } else setClawTwistPos(0.625);
+        //RotatedRect rect = sampleProcessor.getRect();
+
+        if (getRed() > 250 && getDistance() < 1.15) {
+            close();
+        }
+//        if (sampleProcessor.getWidth() > 450) {
+//            setClawTwistPos(0);
+//        } else setClawTwistPos(0.625);
     }
 
 
