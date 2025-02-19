@@ -53,7 +53,7 @@ public class SleekClippaDrive2 extends OpMode {
         //Extend or retract arm
 
         Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * 30 + gamepad1.left_trigger * -30);
-
+        Stage1Subsystem.pickupSample();
         if (gamepad1.left_bumper) Stage1Subsystem.close();
         else if (gamepad1.right_bumper) Stage1Subsystem.open();
 
@@ -65,7 +65,7 @@ public class SleekClippaDrive2 extends OpMode {
 
         if (gamepad1.cross) {
             Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
-            Stage1Subsystem.pickupSample();
+
         }
 
 
