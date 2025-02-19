@@ -211,7 +211,7 @@ public class Stage1Subsystem extends SubsystemBase {
     public static void pickupSample() {
         //RotatedRect rect = sampleProcessor.getRect();
 
-        if (getRed() > 250 && getDistance() < 1.32) {
+        if (getRed() > 285 && getBlue() < 403 && getDistance() < 1.32) {
             close();
         }
         if (sampleProcessor.getWidth() > 450) {
