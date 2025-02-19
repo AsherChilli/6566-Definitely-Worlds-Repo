@@ -268,5 +268,6 @@ public class Stage1Subsystem extends SubsystemBase {
             case 1:
                 break;
 
+        }
     }
 }
