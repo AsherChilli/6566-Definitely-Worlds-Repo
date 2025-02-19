@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Stage1;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,6 +20,8 @@ public class Stage1Subsystem extends SubsystemBase {
     private static Servo clawServo = null;
     private static Servo clawWristServo = null;
     private static Servo clawTwistServo = null;
+
+    private static ColorSensor colorSensor = null;
 
 
 
@@ -47,7 +50,7 @@ public class Stage1Subsystem extends SubsystemBase {
     private static int extTarget = 0;
 
     private static double clawPos = 0.4;
-    private static double clawWristPos;
+    private static double clawWristPos = 0.6;
     private static double clawTwistPos = 0.625;
 
 
@@ -69,6 +72,8 @@ public class Stage1Subsystem extends SubsystemBase {
         clawServo = hMap.get(Servo.class, "GMC");
         clawWristServo = hMap.get(Servo.class, "GMW");
         clawTwistServo = hMap.get(Servo.class, "GMT");
+
+        colorSensor = hMap.get(ColorSensor.class, "ColorSensor");
 
 
 
@@ -114,6 +119,9 @@ public class Stage1Subsystem extends SubsystemBase {
     public static double getClawPos(){return clawPos;}
     public static double getClawWristPos(){return clawWristPos;}
     public static double getClawAnglePos(){return clawTwistPos;}
+    public static double getRed(){ return  colorSensor.red();}
+    public static double getBlue(){return colorSensor.blue();};
+    public static double getGreen(){return colorSensor.green();}
 
     public static void setClawPos(double pos) {
         clawPos = pos;
@@ -153,6 +161,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
     public static void update() {
         double extendPower;
+        extPos = extenderMotorLeft.getCurrentPosition();
 
 
 
@@ -164,7 +173,7 @@ public class Stage1Subsystem extends SubsystemBase {
         extTarget =  Math.max(extMin, Math.min(extMax, extTarget));
         clawPos = Math.max(0, Math.min(1, clawPos));
         clawTwistPos = Math.max(0, Math.min(1, clawTwistPos));
-        clawWristPos = Math.max(extPos < 200 ? 0.7 : 0, Math.min(1, clawWristPos));
+        clawWristPos = Math.max(0.4, Math.min(extPos < 400 ? 0.7 : 1, clawWristPos));
 
 
         //Extension motor

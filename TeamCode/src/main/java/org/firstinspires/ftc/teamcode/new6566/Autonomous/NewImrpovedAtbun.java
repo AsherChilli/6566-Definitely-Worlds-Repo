@@ -72,6 +72,7 @@ public class NewImrpovedAtbun extends OpMode {
                 //No idea
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 //Enable streaming to Dhub and FTC Dashboard (?)
+                //TODO: Set to false to reduce cpu usage
                 .enableLiveView(true)
                 //If all proccesors disabled, stop streaming
                 .setAutoStopLiveView(true)
@@ -90,6 +91,8 @@ public class NewImrpovedAtbun extends OpMode {
         //Sets the processor to be for that color
         sampleProcessor.setColor(color);
 
+
+
         //Telemetry
         telemetry.addLine("For changing between RED and BLUE:");
         telemetry.addLine("Use DPAD_UP for RED");
@@ -102,8 +105,6 @@ public class NewImrpovedAtbun extends OpMode {
     public void loop() {
         //I loveee my autonomous path update
         autonomousPathUpdate();
-        stage2Updater();
-
 
 
         telemetry.addData("Path State: ", pathState);
@@ -197,68 +198,6 @@ public class NewImrpovedAtbun extends OpMode {
         }
 
     }
-
-    private void setStage2(int status) {
-        stage2State = status;
-        stage2timer.resetTimer();
-    }
-    private void stage2Updater() {
-        switch (stage2State) {
-            case 0:
-                break;
-            case 1:
-                break;
-            case pickFromRack:
-                Stage2Subsystem.setAngTarget(-670 + 1493);
-                Stage2Subsystem.setAngPower(0.7);
-                Stage2Subsystem.setClawPos(0);
-                if (Stage2Subsystem.getAngPos() == -670 + 1493 && stage2timer.getElapsedTime() > 1500) {
-                    Stage2Subsystem.setClawPos(0.5);
-                    Stage2Subsystem.setAngTarget(-600 + 1493);
-                } else if (stage2timer.getElapsedTime() > 2500) {
-                    setStage2(1001);
-                }
-                break;
-
-
-            case 1001:
-                Stage2Subsystem.holdOpenMax();
-                Stage2Subsystem.setClawWristPos(0.65);
-
-
-                break;
-            case 1002:
-                Stage2Subsystem.setClawWristPos(0.65);
-                Stage2Subsystem.holdOpenMax();
-                Stage2Subsystem.setAngTarget(0 + 1493);
-                Stage2Subsystem.setAngPower(0.3);
-                break;
-
-            case 1003:
-                Stage2Subsystem.setClawPos(.46);
-                Stage2Subsystem.setClawWristPos(.5);
-                if (stage2timer.getElapsedTime() > 250) {
-                    Stage2Subsystem.holdClose();
-                }
-                break;
-            case 1004:
-                Stage2Subsystem.setClawWristPos(.6);
-                Stage2Subsystem.holdCloseTight();
-                if (stage2timer.getElapsedTime() > 250) {
-                    Stage2Subsystem.setAngTarget(-300 + 1493);
-                    Stage2Subsystem.setAngPower(.4);
-                }
-                break;
-            case 1005:
-                Stage2Subsystem.setClawWristPos(.825);
-                break;
-            case 1006:
-                Stage2Subsystem.setAngTarget(55 + 1493);
-                break;
-        }
-    }
-
-
 
         void buildPaths(){
         //Sets up preload path

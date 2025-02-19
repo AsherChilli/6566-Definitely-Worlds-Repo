@@ -22,6 +22,8 @@ public class Stage2Subsystem extends SubsystemBase {
     private static Servo clipHold;
     private static Servo clipWrist;
 
+    private static Servo clipServo;
+
     private static Servo clipRackLeft;
     private static Servo clipRackRight;
 
@@ -64,6 +66,8 @@ public class Stage2Subsystem extends SubsystemBase {
     private static double clawWristPos;
     private static double rackPos;
 
+    private static double clipServoPos = 0.5;
+
 
     private static final int angMin = 0;
     private static final int angMax = (int) 55 + 1493;
@@ -81,6 +85,8 @@ public class Stage2Subsystem extends SubsystemBase {
 
         clipHold = hMap.get(Servo.class, "CLH");
         clipWrist = hMap.get(Servo.class, "CWR");
+
+        clipServo = hMap.get(Servo.class, "CS");
 
         clipRackLeft = hMap.get(Servo.class, "CCL");
         clipRackRight = hMap.get(Servo.class, "CCR");
@@ -129,6 +135,9 @@ public class Stage2Subsystem extends SubsystemBase {
 
     public static void setClawPos(double pos) {clawPos = pos;}
     public static void setClawWristPos(double pos) {clawWristPos = pos;}
+
+    public static void setClipServoPos(double pos) {clipServoPos = pos;}
+    public static double getClipServoPos() {return clipServoPos;}
 
     public static boolean isBusy(){return isBusy;}
 
@@ -228,6 +237,7 @@ public class Stage2Subsystem extends SubsystemBase {
         clawPos = Math.max(0, Math.min(1, clawPos));
         clawWristPos = Math.max( 0, Math.min(1, clawWristPos));
         rackPos = Math.max(0,Math.min(0.7, rackPos));
+        clipServoPos = Math.max(0, Math.min(1, clipServoPos));
 
 
         //Extension motor
@@ -236,6 +246,8 @@ public class Stage2Subsystem extends SubsystemBase {
         clipHold.setPosition(clawPos);
         clipWrist.setPosition(clawWristPos);
         AngleMotor.setTargetPosition(angTarget);
+
+        clipServo.setPosition(clipServoPos);
 
         clipRackLeft.setPosition(rackPos);
         clipRackRight.setPosition(1.2-rackPos);
