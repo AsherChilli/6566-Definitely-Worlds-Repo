@@ -52,8 +52,8 @@ public class SleekClippaDrive2 extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         //Extend or retract arm
 
-        Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * 20 + gamepad1.left_trigger * -20);
-        Stage1Subsystem.pickupSample();
+        Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * 30 + gamepad1.left_trigger * -30);
+
         if (gamepad1.left_bumper) Stage1Subsystem.close();
         else if (gamepad1.right_bumper) Stage1Subsystem.open();
 
@@ -62,6 +62,11 @@ public class SleekClippaDrive2 extends OpMode {
         else if (gamepad1.dpad_left) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() - 0.01);}
         if (gamepad1.dpad_up) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() + 0.01);}
         else if (gamepad1.dpad_down) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() - 0.01);}
+
+        if (gamepad1.cross) {
+            Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
+            Stage1Subsystem.pickupSample();
+        }
 
 
         if (gamepad2.dpad_up) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + 10);
@@ -93,10 +98,8 @@ public class SleekClippaDrive2 extends OpMode {
 
 
 
-//        telemetry.addData("Ext Pos", Stage1Subsystem.getExtenderPos());
-
-
-//        telemetry.addData("Ext Target", Stage1Subsystem.getExtTarget());
+        telemetry.addData("Ext Pos", Stage1Subsystem.getExtenderPos());
+        telemetry.addData("Ext Target", Stage1Subsystem.getExtTarget());
         telemetry.addData("Clip servo pos", Stage2Subsystem.getClipServoPos());
         telemetry.addData("red", Stage1Subsystem.getRed());
         telemetry.addData("blue", Stage1Subsystem.getBlue());
