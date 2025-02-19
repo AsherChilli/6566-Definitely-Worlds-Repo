@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.OpenCV.Processors.sampleProcessor;
+import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.RotatedRect;
 //import com.qualcomm.robotcore.hardware.Servo;
@@ -33,6 +34,10 @@ public class Stage1Subsystem extends SubsystemBase {
     private static ColorSensor colorSensor = null;
     private static DistanceSensor distanceSensor = null;
 
+
+    private static int stage1State = 0;
+
+    private static Timer stage1Timer = new Timer();
 
     static VisionPortal visionPortal;
 
@@ -250,5 +255,18 @@ public class Stage1Subsystem extends SubsystemBase {
         extenderMotorLeft.setPower(extendPower);
         extenderMotorRight.setPower(extendPower);
         isBusy = !( extPos >= extTarget - 10 && extPos <= extTarget + 10);
+    }
+
+    public static void setStage1(int status) {
+        stage1State = status;
+        stage1Timer.resetTimer();
+    }
+    public static void stage1Updater() {
+        switch (stage1State) {
+            case 0:
+                break;
+            case 1:
+                break;
+
     }
 }

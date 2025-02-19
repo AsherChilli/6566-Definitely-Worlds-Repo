@@ -66,10 +66,10 @@ public class SleekClippaDrive2 extends OpMode {
         if (gamepad1.dpad_up) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() + 0.01);}
         else if (gamepad1.dpad_down) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() - 0.01);}
 
-        if (gamepad1.cross) {
-            Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
-
-        }
+//        if (gamepad1.cross) {
+//            Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
+//
+//        }
 
 
         if (gamepad2.dpad_up) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + 10);
@@ -87,8 +87,9 @@ public class SleekClippaDrive2 extends OpMode {
             Stage1Subsystem.setClawWristPos(0);
 
         }
-        if(gamepad2.dpad_left){stage2.raiseCams();}
-        else stage2.lowerCams();
+        if(gamepad2.dpad_left){
+            Stage2Subsystem.raiseCams();}
+        else Stage2Subsystem.lowerCams();
 //        if (gamepad2.a) Stage2Subsystem.holdClose();
 //        else if (gamepad2.b) Stage2Subsystem.holdOpenMax();
 
@@ -96,7 +97,7 @@ public class SleekClippaDrive2 extends OpMode {
 
         Stage1Subsystem.update();
         Stage2Subsystem.update();
-        stage2.stage2Updater();
+        Stage2Subsystem.stage2Updater();
         follower.updatePose();
 
 

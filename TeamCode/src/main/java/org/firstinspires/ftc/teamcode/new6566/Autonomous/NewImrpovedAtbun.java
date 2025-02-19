@@ -108,6 +108,7 @@ public class NewImrpovedAtbun extends OpMode {
                 Raise the arm to score
                 Some kind of score function
                  */
+                Stage2Subsystem.readyScore();
                 follower.followPath(preload, true);
                 setState(2);
                 break;
@@ -123,7 +124,8 @@ public class NewImrpovedAtbun extends OpMode {
                 Move to the preloadClip spot
                 Ensure cams are lowered (servos are powered to the low end)
                  */
-                follower.followPath(prepareClip);
+                if (pathTimer.getElapsedTime() < 1000) Stage2Subsystem.score();
+                else follower.followPath(prepareClip);
                 setState(4);
                 break;
             case(4):
@@ -136,11 +138,13 @@ public class NewImrpovedAtbun extends OpMode {
                 Move into the wall
                 Raise the cams (both of them please, all the way)
                  */
+                Stage1Subsystem.pickupSample();
                 follower.followPath(collectClip);
                 setState(6);
                 break;
             case(6):
                 if (!follower.isBusy())
+                    Stage2Subsystem.raiseCams();
                     setState(7);
                 break;
             case(7):
@@ -154,7 +158,8 @@ public class NewImrpovedAtbun extends OpMode {
                 Retract back in
                 Have claw(s) in their clipping position
                  */
-                follower.followPath(pickupSample);
+                if (pathTimer.getElapsedTime() < 500) {}
+                else follower.followPath(pickupSample);
                 setState(8);
                 break;
             case(8):

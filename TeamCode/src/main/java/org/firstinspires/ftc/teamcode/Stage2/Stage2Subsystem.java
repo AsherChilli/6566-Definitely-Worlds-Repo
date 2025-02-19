@@ -149,7 +149,7 @@ public class Stage2Subsystem extends SubsystemBase {
     public static void holdClose() {clawPos = 0.35;}
     public static void holdCloseTight() {clawPos = 0.3;}
 
-    public void raiseCams(){
+    public static void raiseCams(){
         rackPos = 0;
     }
     public static void lowerCams(){
@@ -205,10 +205,10 @@ public class Stage2Subsystem extends SubsystemBase {
     public static void clipFinal() {setClipServoPos(.383);}
     public static void clipPress() {setClipServoPos(.8);}
 
-    public void readyScore() {
+    public static void readyScore() {
 
     }
-    public void score() {
+    public static void score() {
 
     }
 
