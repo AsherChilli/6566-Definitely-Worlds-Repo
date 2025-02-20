@@ -68,6 +68,8 @@ public class Stage1Subsystem extends SubsystemBase {
 
     private static int extPos = 0;
     private static int extTarget = 0;
+    private static boolean pidMoving = false;
+    private static double extPow = 0;
 
     private static double clawPos = 0.4;
     private static double clawWristPos = 0.6;
@@ -138,13 +140,12 @@ public class Stage1Subsystem extends SubsystemBase {
     // ----------------
     // Setters
     // ----------------
-    public static void setPos(double ext) {
-
-        extTarget = (int) ext;
-    }
-
-    public static void setPosIN(double ext) {
-        extTarget = (int) (ext * ticks_in_inch);
+    public static void setPos(double ext) {extTarget = (int) ext; pidMoving = true;}
+    public static void setPosIN(double ext) {extTarget = (int) (ext * ticks_in_inch); pidMoving = true;}
+    //Shattuck's slide interpretation
+    public static void setExtPow(double pow) {
+        extPow = pow;
+        if (extPow != 0) {pidMoving = false;}
     }
     // ----------------
     // Getters
@@ -221,7 +222,7 @@ public class Stage1Subsystem extends SubsystemBase {
         }
         if (sampleProcessor.getWidth() > 450) {
             setClawTwistPos(0);
-        } else setClawTwistPos(0.625);
+        } else if (sampleProcessor.getWidth() < 450) setClawTwistPos(0.625);
     }
 
 
@@ -253,9 +254,22 @@ public class Stage1Subsystem extends SubsystemBase {
         clawWristServo.setPosition(clawWristPos);
         clawTwistServo.setPosition(clawTwistPos);
 
-        extenderMotorLeft.setPower(extendPower);
-        extenderMotorRight.setPower(extendPower);
-        isBusy = !( extPos >= extTarget - 10 && extPos <= extTarget + 10);
+        if (pidMoving) {
+            extenderMotorLeft.setPower(extendPower);
+            extenderMotorRight.setPower(extendPower);
+            isBusy = !(extPos >= extTarget - 10 && extPos <= extTarget + 10);
+        }
+        else {
+            //ARM LIMITS
+            if (!(extPos < extMin && extPow < 0) && !(extPos > extMax && extPow > 0)) {
+                extenderMotorLeft.setPower(extPow);
+                extenderMotorRight.setPower(extPow);
+            }
+
+            //Determines if busy
+            if (extPow != 0) {isBusy = true;}
+            else {isBusy = false;}
+        }
     }
 
     public static void setStage1(int status) {

@@ -43,6 +43,8 @@ public class SleekClippaDrive2 extends OpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         follower.startTeleopDrive();
+
+        Stage2Subsystem.getAngPos();
    }
 
     @Override
@@ -59,8 +61,13 @@ public class SleekClippaDrive2 extends OpMode {
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         //Extend or retract arm
 
-        Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * 30 + gamepad1.left_trigger * -30);
+        if (gamepad1.right_trigger > .05) {Stage1Subsystem.setExtPow(gamepad1.right_trigger);}
+        else if (gamepad1.left_trigger > .05) {Stage1Subsystem.setExtPow(-1 * gamepad1.left_trigger);}
+        else {Stage1Subsystem.setExtPow(0);}
+        //Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + gamepad1.right_trigger * 30 + gamepad1.left_trigger * -30);
+
         //Stage1Subsystem.pickupSample();
+
         if (gamepad1.left_bumper) Stage1Subsystem.open();
         else if (gamepad1.right_bumper) Stage1Subsystem.close();
 
@@ -78,12 +85,12 @@ public class SleekClippaDrive2 extends OpMode {
 //
 //        }
 
+        Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + gamepad2.right_stick_y * 20);
+//        if (gamepad2.dpad_up) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + 10);
+//        else if (gamepad2.dpad_down) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() - 10);
 
-        if (gamepad2.dpad_up) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() + 10);
-        else if (gamepad2.dpad_down) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() - 10);
-
-        Stage2Subsystem.setClipServoPos(Stage2Subsystem.getClipServoPos() + gamepad2.left_stick_y* 0.01);
-        Stage2Subsystem.setClawWristPos(Stage2Subsystem.getClawWristPos() + gamepad2.right_stick_y * 0.01);
+        //Stage2Subsystem.setClipServoPos(Stage2Subsystem.getClipServoPos() + gamepad2.left_stick_y* 0.01);
+        Stage2Subsystem.setClawWristPos(Stage2Subsystem.getClawWristPos() + gamepad2.left_stick_y * 0.01);
 
 //        if(gamepad2.triangle){
 //            Stage2Subsystem.setStage2(Stage2Subsystem.readyPickFromRack);}
@@ -117,6 +124,7 @@ public class SleekClippaDrive2 extends OpMode {
         Stage1Subsystem.update();
         Stage2Subsystem.update();
         Stage2Subsystem.stage2Updater();
+        follower.update();
         follower.updatePose();
         autonomousUpdate();
 
