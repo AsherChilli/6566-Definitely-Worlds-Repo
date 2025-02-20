@@ -294,9 +294,14 @@ public class Stage2Subsystem extends SubsystemBase {
             case clipVal:
                 if (stage2timer.getElapsedTime() < 1000) {
                     clip();
+                }
+                else if (stage2timer.getElapsedTime() < 2000) {
                     clipPress();
                 }
-                else if (stage2timer.getElapsedTime() < 3500) clipFinal();
+                else if (stage2timer.getElapsedTime() < 3000) {
+                    clipFinal();
+                }
+
                 else setStage2(0);
                 break;
 
