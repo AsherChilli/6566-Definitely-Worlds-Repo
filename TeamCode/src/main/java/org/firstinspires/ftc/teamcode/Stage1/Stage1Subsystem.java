@@ -185,10 +185,10 @@ public class Stage1Subsystem extends SubsystemBase {
     }
     public static void close() {setClawPos(0.455);} // .42 previously
     public static void closeTight() {setClawPos(0.28);}
-    public static void open() {setClawPos(0.6);}
+    public static void open() {setClawPos(0.73);}
 
 
-    public static void up() {setClawWristPos(0.65);}
+    public static void up() {setClawWristPos(0.65);} //.65 worked
     public static void down() {setClawWristPos(.95);}
 
     public static void setRed() {color = sampleProcessor.Color.RED;}
@@ -214,15 +214,18 @@ public class Stage1Subsystem extends SubsystemBase {
     // ----------------
 
 
+    public static void orientToSample() {
+        if (sampleProcessor.getWidth() > 450) {
+            setClawTwistPos(0);
+        } else if (sampleProcessor.getWidth() < 450) setClawTwistPos(0.625);
+    }
     public static void pickupSample() {
         //RotatedRect rect = sampleProcessor.getRect();
 
         if (getRed() > 285 && getBlue() < 403 && getDistance() < 1.32) {
             close();
         }
-        if (sampleProcessor.getWidth() > 450) {
-            setClawTwistPos(0);
-        } else if (sampleProcessor.getWidth() < 450) setClawTwistPos(0.625);
+
     }
 
 

@@ -70,7 +70,7 @@ public class Stage2Subsystem extends SubsystemBase {
 
 
     private static final int angMin = 0;
-    private static final int angMax = (int) 55 + 1493;
+    private static final int angMax = (int) 100 + 1493;
 
 
 
@@ -193,17 +193,18 @@ public class Stage2Subsystem extends SubsystemBase {
     }
     public static void readyClip2() {
         setAngTarget(55 + 1493);
-        setClawWristPos(.785);
+        setClawWristPos(.77);//.785 worked
     }
     public void readyClip3() {
         setClawWristPos(.825);
     }
     public static void clip() {
+        setAngTarget(100 + 1493);
         holdCloseTight();
         setClawWristPos(1);
     }
     public static void clipFinal() {setClipServoPos(.3);}
-    public static void clipPress() {setClipServoPos(.6);}
+    public static void clipPress() {setClipServoPos(.7);}
 
     public static void readyScore() {
 
@@ -292,13 +293,13 @@ public class Stage2Subsystem extends SubsystemBase {
                 else setStage2(0);
                 break;
             case clipVal:
-                if (stage2timer.getElapsedTime() < 1000) {
+                if (stage2timer.getElapsedTime() < 500) {
                     clip();
                 }
-                else if (stage2timer.getElapsedTime() < 2000) {
+                else if (stage2timer.getElapsedTime() < 1300) {
                     clipPress();
                 }
-                else if (stage2timer.getElapsedTime() < 3000) {
+                else if (stage2timer.getElapsedTime() < 4000) {
                     clipFinal();
                 }
 

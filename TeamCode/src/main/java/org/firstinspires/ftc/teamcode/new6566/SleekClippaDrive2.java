@@ -44,7 +44,11 @@ public class SleekClippaDrive2 extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         follower.startTeleopDrive();
 
-        Stage2Subsystem.getAngPos();
+   }
+
+   @Override
+   public void init_loop() {
+
    }
 
     @Override
@@ -116,7 +120,11 @@ public class SleekClippaDrive2 extends OpMode {
         if(gamepad2.dpad_left){
             Stage2Subsystem.raiseCams();}
         else Stage2Subsystem.lowerCams();
-        if (gamepad2.dpad_up){Stage2Subsystem.setAngTarget(800);}
+        if (gamepad2.dpad_up){
+            Stage2Subsystem.setAngTarget(600);
+            Stage2Subsystem.setAngPower(.5);
+            telemetry.addLine("Angle: " + String.valueOf(Stage2Subsystem.getAngTarget()));
+        }
 //        if (gamepad2.a) Stage2Subsystem.holdClose();
 //        else if (gamepad2.b) Stage2Subsystem.holdOpenMax();
 
@@ -167,10 +175,11 @@ public class SleekClippaDrive2 extends OpMode {
             case clip:
                 Stage2Subsystem.setStage2(Stage2Subsystem.readyPickFromRack);
                 Stage1Subsystem.up();
+                Stage1Subsystem.close();
                 setState(1001);
                 break;
             case 1001:
-                if (timer.getElapsedTime() > 2500) {
+                if (timer.getElapsedTime() > 1800) {
                     setState(1002);
                 }
                 break;
@@ -189,8 +198,8 @@ public class SleekClippaDrive2 extends OpMode {
                 setState(1005);
                 break;
             case 1005:
-                if (timer.getElapsedTime() < 2500) {}
-                else if (timer.getElapsedTime() < 3500) {Stage1Subsystem.setPos(255);}
+                if (timer.getElapsedTime() < 1800) {}
+                else if (timer.getElapsedTime() < 2200) {Stage1Subsystem.setPos(220);}
                 else {
                     setState(1006);
                 }
@@ -198,7 +207,10 @@ public class SleekClippaDrive2 extends OpMode {
             case 1006:
                 Stage2Subsystem.setStage2(Stage2Subsystem.clipVal);
                 Stage1Subsystem.closeTight();
-                Stage1Subsystem.setClawWristPos(0);
+                setState(1007);
+                break;
+            case 1007:
+                if (timer.getElapsedTime() > 500) Stage1Subsystem.setClawWristPos(0);
                 if (timer.getElapsedTime() > 7000) {
                     Stage1Subsystem.open();
                     Stage1Subsystem.up();
