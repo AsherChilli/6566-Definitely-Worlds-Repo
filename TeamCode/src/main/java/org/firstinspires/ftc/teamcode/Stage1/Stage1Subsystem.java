@@ -189,7 +189,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
     public static void up() {setClawWristPos(0.65);}
-    public static void down() {setClawWristPos(1);}
+    public static void down() {setClawWristPos(.95);}
 
     public static void setRed() {color = sampleProcessor.Color.RED;}
     public static void setBlue() {color = sampleProcessor.Color.BLUE;}
@@ -261,7 +261,7 @@ public class Stage1Subsystem extends SubsystemBase {
         }
         else {
             //ARM LIMITS
-            if (!(extPos < extMin && extPow < 0) && !(extPos > extMax && extPow > 0)) {
+            if (!(extPos < extMin && extPow < 0) && !(extPos > 2400 && extPow > 0)) {
                 extenderMotorLeft.setPower(extPow);
                 extenderMotorRight.setPower(extPow);
             }
