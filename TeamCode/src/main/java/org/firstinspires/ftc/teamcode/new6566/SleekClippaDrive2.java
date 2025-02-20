@@ -116,6 +116,7 @@ public class SleekClippaDrive2 extends OpMode {
         if(gamepad2.dpad_left){
             Stage2Subsystem.raiseCams();}
         else Stage2Subsystem.lowerCams();
+        if (gamepad2.dpad_up){Stage2Subsystem.setAngTarget(800);}
 //        if (gamepad2.a) Stage2Subsystem.holdClose();
 //        else if (gamepad2.b) Stage2Subsystem.holdOpenMax();
 
