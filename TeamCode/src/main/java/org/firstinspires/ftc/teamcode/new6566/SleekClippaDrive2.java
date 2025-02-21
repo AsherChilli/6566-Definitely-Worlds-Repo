@@ -44,10 +44,22 @@ public class SleekClippaDrive2 extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         follower.startTeleopDrive();
 
+
+        //Stage1Subsystem.setExtPosBlind(100,1,Stage1Subsystem.BlindfoldReset());
+        Stage2Subsystem.setAngTarget(1000);
+        Stage1Subsystem.close();
+        Stage1Subsystem.up();
+        Stage1Subsystem.setClawTwistPos(0.625);
+        Stage2Subsystem.setClipServoPos(.3);
+        Stage2Subsystem.setClawWristPos(0);
+
+
    }
 
    @Override
    public void init_loop() {
+       Stage2Subsystem.update();
+       Stage1Subsystem.update();
 
    }
 
@@ -77,12 +89,14 @@ public class SleekClippaDrive2 extends OpMode {
 
         if (gamepad1.triangle) Stage1Subsystem.up();
         if (gamepad1.cross) Stage1Subsystem.down();
-        if (gamepad1.circle) Stage1Subsystem.setPos(255);
+        if (gamepad1.square) Stage1Subsystem.setClawTwistPos(0);
+        if (gamepad1.circle) Stage1Subsystem.setClawTwistPos(0.625);
+        //if (gamepad1.circle) Stage1Subsystem.setPos(255);
 
-        if(gamepad1.dpad_right) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() + 0.01);}
-        else if (gamepad1.dpad_left) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() - 0.01);}
-        if (gamepad1.dpad_up) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() + 0.01);}
-        else if (gamepad1.dpad_down) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() - 0.01);}
+        if(gamepad1.dpad_down) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() + 0.01);}
+        else if (gamepad1.dpad_up) {Stage1Subsystem.setClawWristPos(Stage1Subsystem.getClawWristPos() - 0.01);}
+        if (gamepad1.dpad_left) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() + 0.01);}
+        else if (gamepad1.dpad_right) {Stage1Subsystem.setClawTwistPos(Stage1Subsystem.getClawTwistPos() - 0.01);}
 
 //        if (gamepad1.cross) {
 //            Stage1Subsystem.setPos(Stage1Subsystem.getExtTarget() + 10);
@@ -94,7 +108,7 @@ public class SleekClippaDrive2 extends OpMode {
 //        else if (gamepad2.dpad_down) Stage2Subsystem.setAngTarget(Stage2Subsystem.getAngTarget() - 10);
 
         //Stage2Subsystem.setClipServoPos(Stage2Subsystem.getClipServoPos() + gamepad2.left_stick_y* 0.01);
-        Stage2Subsystem.setClawWristPos(Stage2Subsystem.getClawWristPos() + gamepad2.left_stick_y * 0.01);
+        Stage2Subsystem.setClawWristPos(Stage2Subsystem.getClawWristPos() + gamepad2.left_stick_y * 0.03);
 
 //        if(gamepad2.triangle){
 //            Stage2Subsystem.setStage2(Stage2Subsystem.readyPickFromRack);}
@@ -117,19 +131,24 @@ public class SleekClippaDrive2 extends OpMode {
         if(gamepad2.triangle) {
             setState(0);
         }
+        if(gamepad2.b) {
+            setState(1004);
+        }
         if(gamepad2.dpad_left){
             Stage2Subsystem.raiseCams();}
         else Stage2Subsystem.lowerCams();
         if (gamepad2.dpad_up){
-            Stage2Subsystem.setAngTarget(600);
-            Stage2Subsystem.setAngPower(.5);
+            Stage2Subsystem.readyScore();
             telemetry.addLine("Angle: " + String.valueOf(Stage2Subsystem.getAngTarget()));
         }
+
+        if (gamepad2.left_bumper) Stage2Subsystem.holdOpenMax();
+        else if (gamepad2.right_bumper) Stage2Subsystem.holdClose();
 //        if (gamepad2.a) Stage2Subsystem.holdClose();
 //        else if (gamepad2.b) Stage2Subsystem.holdOpenMax();
 
-
-
+//        Stage1Subsystem.orientToSample();
+        //Stage1Subsystem.pickupSample();
         Stage1Subsystem.update();
         Stage2Subsystem.update();
         Stage2Subsystem.stage2Updater();
@@ -156,7 +175,6 @@ public class SleekClippaDrive2 extends OpMode {
 
         telemetry.addData("Clip Claw Wrist", Stage2Subsystem.getClawWristPos());
         telemetry.addData("Clip Claw", Stage2Subsystem.getClawPos());
-
 //        telemetry.addLine("Arm Position: " + String.valueOf(r.ClipArm.getCurrentPosition()) );
 //        telemetry.addLine("Extendo Position: " + String.valueOf(r.ExtendLeft.getCurrentPosition()) );
 //        telemetry.addLine("Twist Position: " + String.valueOf(r.GameTwist.getPosition()) );
@@ -185,7 +203,10 @@ public class SleekClippaDrive2 extends OpMode {
                 break;
             case 1002:
                 Stage2Subsystem.setStage2(Stage2Subsystem.pickFromRack);
-                Stage1Subsystem.setPos(500);
+                int start = Stage1Subsystem.BlindfoldReset();
+                Stage1Subsystem.setExtPosBlind(500, .8, start);
+                Stage1Subsystem.setClawTwistPos(.625);
+                Stage1Subsystem.up();
                 setState(1003);
                 break;
             case 1003:
@@ -199,7 +220,7 @@ public class SleekClippaDrive2 extends OpMode {
                 break;
             case 1005:
                 if (timer.getElapsedTime() < 1800) {}
-                else if (timer.getElapsedTime() < 2200) {Stage1Subsystem.setPos(220);}
+                else if (timer.getElapsedTime() < 2200) {Stage1Subsystem.setPos(210);}
                 else {
                     setState(1006);
                 }
@@ -211,10 +232,11 @@ public class SleekClippaDrive2 extends OpMode {
                 break;
             case 1007:
                 if (timer.getElapsedTime() > 500) Stage1Subsystem.setClawWristPos(0);
-                if (timer.getElapsedTime() > 7000) {
+                if (timer.getElapsedTime() > 3000) {
                     Stage1Subsystem.open();
                     Stage1Subsystem.up();
-                    Stage1Subsystem.setPos(600);
+                    start = Stage1Subsystem.BlindfoldReset();
+                    Stage1Subsystem.setExtPosBlind(600, .8, start);
                     setState(0);
                 }
                 break;

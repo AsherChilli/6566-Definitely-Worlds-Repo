@@ -147,7 +147,7 @@ public class Stage2Subsystem extends SubsystemBase {
 
     public static void holdOpenMax() {clawPos = 0.475;}
     public static void holdClose() {clawPos = 0.35;}
-    public static void holdCloseTight() {clawPos = 0.3;}
+    public static void holdCloseTight() {clawPos = 0.28;}
 
     public static void raiseCams(){
         rackPos = 0;
@@ -195,8 +195,8 @@ public class Stage2Subsystem extends SubsystemBase {
         setAngTarget(55 + 1493);
         setClawWristPos(.785);
     }
-    public void readyClip3() {
-        setClawWristPos(.825);
+    public static void readyClip3() {
+        setClawWristPos(.785);
     }
     public static void clip() {
         holdCloseTight();
@@ -206,7 +206,9 @@ public class Stage2Subsystem extends SubsystemBase {
     public static void clipPress() {setClipServoPos(.6);}
 
     public static void readyScore() {
-
+        Stage2Subsystem.setAngTarget(600);
+        Stage2Subsystem.setAngPower(.5);
+        Stage2Subsystem.setClawWristPos(0);
     }
     public static void score() {
 
@@ -294,6 +296,8 @@ public class Stage2Subsystem extends SubsystemBase {
             case clipVal:
                 if (stage2timer.getElapsedTime() < 1000) {
                     clip();
+                }
+                else if (stage2timer.getElapsedTime() < 2000) {
                     clipPress();
                 }
                 else if (stage2timer.getElapsedTime() < 3500) clipFinal();

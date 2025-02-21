@@ -67,9 +67,13 @@ public class Stage1Subsystem extends SubsystemBase {
 
 
     private static int extPos = 0;
+    private static int extPosInit = 0;
+    private static int extBlind = 0; //This is the target the slide will blindly run to
     private static int extTarget = 0;
     private static boolean pidMoving = false;
+    private static boolean blindfold = true; //True if PID not used for set position
     private static double extPow = 0;
+    private static int sign = 0;
 
     private static double clawPos = 0.4;
     private static double clawWristPos = 0.6;
@@ -140,12 +144,39 @@ public class Stage1Subsystem extends SubsystemBase {
     // ----------------
     // Setters
     // ----------------
-    public static void setPos(double ext) {extTarget = (int) ext; pidMoving = true;}
-    public static void setPosIN(double ext) {extTarget = (int) (ext * ticks_in_inch); pidMoving = true;}
+    public static void setPos(double ext) {extTarget = (int) ext; pidMoving = true; blindfold = false;}
+    public static void setPosIN(double ext) {extTarget = (int) (ext * ticks_in_inch); pidMoving = true; blindfold = false;}
+
     //Shattuck's slide interpretation
     public static void setExtPow(double pow) {
         extPow = pow;
-        if (extPow != 0) {pidMoving = false;}
+        if (extPow != 0) {pidMoving = false; blindfold = false;}
+    }
+    private static double SmoothPow(double currentPower, double targetPower, double smoothingFactor) {
+        smoothingFactor = Math.min(Math.max(smoothingFactor, 0.0), 1);
+        return currentPower + (targetPower - currentPower) * smoothingFactor;
+    }
+    public static int BlindfoldReset() {
+        return extenderMotorLeft.getCurrentPosition();
+    }
+    public static void setExtPosBlind(double pos, double pow, int startingPos) {
+        extPos = extenderMotorLeft.getCurrentPosition();
+
+        extBlind = (int) pos;
+        if (extBlind != extPos) {
+            sign = (extBlind - extPos) / Math.abs(extBlind - extPos);
+        }
+        else {
+            sign = 0;
+        }
+        if (Math.abs(((double)extBlind - startingPos) / 2 ) > Math.abs(extPos - startingPos)) {
+            extPow = SmoothPow(extPow, pow, .25) * (sign);
+        }
+        else {
+            extPow = SmoothPow(extPow, 0, .25) * (sign);
+        }
+        pidMoving = false;
+        blindfold = true;
     }
     // ----------------
     // Getters
@@ -251,16 +282,25 @@ public class Stage1Subsystem extends SubsystemBase {
 
         //Extension motor
         //extendController.setPID(pExtend,iExtend,dExtend);
-        extendPower = Math.max(-.8, Math.min(.8, extendController.calculate(extenderMotorLeft.getCurrentPosition(), extTarget)));
+        extendPower = Math.max(-1, Math.min(1, extendController.calculate(extenderMotorLeft.getCurrentPosition(), extTarget)));
 
         clawServo.setPosition(clawPos);
         clawWristServo.setPosition(clawWristPos);
         clawTwistServo.setPosition(clawTwistPos);
 
+        //Blindfold and pidMoving cannot both be true
         if (pidMoving) {
             extenderMotorLeft.setPower(extendPower);
             extenderMotorRight.setPower(extendPower);
             isBusy = !(extPos >= extTarget - 10 && extPos <= extTarget + 10);
+        }
+        else if (blindfold) {
+            if (!(extPos < extMin && extPow < 0) && !(extPos > 2400 && extPow > 0)) {
+                extenderMotorLeft.setPower(extPow);
+                extenderMotorRight.setPower(extPow);
+            }
+            if (Math.abs(extPow) > .1) {isBusy = true;}
+            else {isBusy = false;}
         }
         else {
             //ARM LIMITS
