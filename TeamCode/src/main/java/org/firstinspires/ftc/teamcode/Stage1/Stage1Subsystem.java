@@ -215,11 +215,12 @@ public class Stage1Subsystem extends SubsystemBase {
         clawTwistPos = 0.5;
     }
     public static void close() {setClawPos(0.455);} // .42 previously
+    public static void closeMid() {setClawPos(0.4);}
     public static void closeTight() {setClawPos(0.28);}
     public static void open() {setClawPos(0.73);}
 
 
-    public static void up() {setClawWristPos(0.65);} //.65 worked
+    public static void up() {setClawWristPos(0.65 + .027);} //.65 worked
     public static void down() {setClawWristPos(.95);}
 
     public static void setRed() {color = sampleProcessor.Color.RED;}

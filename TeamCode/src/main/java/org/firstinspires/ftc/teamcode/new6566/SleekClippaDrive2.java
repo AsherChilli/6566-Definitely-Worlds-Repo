@@ -220,7 +220,10 @@ public class SleekClippaDrive2 extends OpMode {
                 break;
             case 1005:
                 if (timer.getElapsedTime() < 1800) {}
-                else if (timer.getElapsedTime() < 2200) {Stage1Subsystem.setPos(210);}
+                else if (timer.getElapsedTime() < 2200) {
+                    Stage1Subsystem.setPos(210);
+                    Stage1Subsystem.closeMid();
+                }
                 else {
                     setState(1006);
                 }

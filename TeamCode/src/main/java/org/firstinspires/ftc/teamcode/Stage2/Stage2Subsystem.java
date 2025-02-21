@@ -193,7 +193,7 @@ public class Stage2Subsystem extends SubsystemBase {
     }
     public static void readyClip2() {
         setAngTarget(55 + 1493);
-        setClawWristPos(.785);
+        setClawWristPos(.785 - .08);//.03//.785 worked, needed more accuracy
     }
     public static void readyClip3() {
         setClawWristPos(.785);
