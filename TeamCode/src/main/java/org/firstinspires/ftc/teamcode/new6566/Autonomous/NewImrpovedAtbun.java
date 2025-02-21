@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.new6566.Autonomous;
 
-import android.media.audiofx.DynamicsProcessing;
-import android.util.Size;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.OpenCV.Processors.sampleProcessor;
 import org.firstinspires.ftc.teamcode.Stage1.Stage1Subsystem;
 import org.firstinspires.ftc.teamcode.Stage2.Stage2Subsystem;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
@@ -18,7 +12,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
-import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
 
@@ -28,20 +21,20 @@ public class NewImrpovedAtbun extends OpMode {
 
     Follower follower;
 
-    Stage1Subsystem stage1 = new Stage1Subsystem(hardwareMap);
-    Stage2Subsystem stage2 = new Stage2Subsystem(hardwareMap);
+    Stage1Subsystem stage1;
+    Stage2Subsystem stage2;
 
     PathChain preload, prepareClip, collectClip, pickupSample, moveToScore;
 
-    MultipleTelemetry telemetry;
+    //MultipleTelemetry telemetry;
 
-    int pathState = 0;
+    private int pathState = 0;
+    private int armState = 0;
+    private int autonState = 0;
 
-    private int stage2State = 0;
 
-    private final int pickFromRack = 1000;
-
-    private Timer stage2timer = new Timer();
+    private Timer armTimer = new Timer();
+    private Timer autonTimer = new Timer();
     private Timer pathTimer = new Timer();
 
     //Class of sampleDetection
@@ -55,7 +48,16 @@ public class NewImrpovedAtbun extends OpMode {
 
         //Sets up epic driver thingy
         follower = new Follower(hardwareMap);
+        follower.setStartingPose(poses.start);
         buildPaths();
+
+        stage2 = new Stage2Subsystem(hardwareMap);
+        stage1 = new Stage1Subsystem(hardwareMap);
+
+        Stage2Subsystem.setAngTarget(1200);
+        Stage2Subsystem.setAngPower(0.7);
+        setAutonState(1);
+        Stage2Subsystem.lowerCams();
 
         //Vision Portal INIT
 
@@ -68,6 +70,10 @@ public class NewImrpovedAtbun extends OpMode {
         //Determines whether we are RED or BLUE
         if(gamepad1.dpad_up){Stage1Subsystem.setRed();}
         else if(gamepad1.dpad_down){Stage1Subsystem.setBlue();}
+
+
+        Stage1Subsystem.update();
+        Stage2Subsystem.update();
 
         //Sets the processor to be for that color
 
@@ -84,9 +90,13 @@ public class NewImrpovedAtbun extends OpMode {
     @Override
     public void loop() {
         //I loveee my autonomous path update
-        autonomousPathUpdate();
         Stage1Subsystem.update();
         Stage2Subsystem.update();
+        Stage2Subsystem.stage2Updater();
+        follower.update();
+        follower.updatePose();
+        autonomousPathUpdate();
+        autonomousUpdate();
 
 
         telemetry.addData("Path State: ", pathState);
@@ -94,11 +104,13 @@ public class NewImrpovedAtbun extends OpMode {
 
     }
 
-    void setState(int num){pathState = num;}
+    void setPathState(int num){pathState = num;}
 
     void autonomousPathUpdate(){
 
         switch (pathState){
+            case 0 :
+                break;
 
             //Make robot go forward and
             case(1):
@@ -108,14 +120,14 @@ public class NewImrpovedAtbun extends OpMode {
                 Raise the arm to score
                 Some kind of score function
                  */
-                Stage2Subsystem.readyScore();
+                //Stage2Subsystem.readyScore();
                 follower.followPath(preload, true);
-                setState(2);
+                setPathState(2);
                 break;
 
             case(2):
                 if (!follower.isBusy())
-                    setState(3);
+                    setPathState(0);
                 break;
             case(3):
                 /*
@@ -126,11 +138,11 @@ public class NewImrpovedAtbun extends OpMode {
                  */
                 if (pathTimer.getElapsedTime() < 1000) Stage2Subsystem.score();
                 else follower.followPath(prepareClip);
-                setState(4);
+                setPathState(4);
                 break;
             case(4):
-                if (!follower.isBusy())
-                    setState(5);
+                if (!follower.isBusy() && pathTimer.getElapsedTime() > 2000)
+                    setPathState(0);
                 break;
             case(5):
                 /*
@@ -140,12 +152,15 @@ public class NewImrpovedAtbun extends OpMode {
                  */
                 Stage1Subsystem.pickupSample();
                 follower.followPath(collectClip);
-                setState(6);
+                setPathState(6);
                 break;
             case(6):
                 if (!follower.isBusy())
-                    Stage2Subsystem.raiseCams();
-                    setState(7);
+                    if (pathTimer.getElapsedTime() < 1000) {
+                        Stage2Subsystem.raiseCams();
+                    } else {
+                        setPathState(0);
+                    }
                 break;
             case(7):
                 /*
@@ -160,11 +175,11 @@ public class NewImrpovedAtbun extends OpMode {
                  */
                 if (pathTimer.getElapsedTime() < 500) {}
                 else follower.followPath(pickupSample);
-                setState(8);
+                setPathState(8);
                 break;
             case(8):
                 if (!follower.isBusy())
-                    setState(9);
+                    setPathState(0);
                 break;
             case(9):
                 /*
@@ -174,7 +189,7 @@ public class NewImrpovedAtbun extends OpMode {
                 Get arm into scoring position, while moving (efficiency!)
                 Score function epicness
                  */
-                setState(-1);
+                setPathState(0);
                 break;
             case(-1):
                 /*
@@ -184,6 +199,145 @@ public class NewImrpovedAtbun extends OpMode {
 
         }
 
+    }
+
+    void setArmState(int num) {
+        armState = num;
+        armTimer.resetTimer();
+    }
+
+    void autonomousArmUpdate() {
+        switch (armState) {
+            case 0:
+                break;
+            case 1000:
+                Stage2Subsystem.setStage2(Stage2Subsystem.readyPickFromRack);
+                Stage1Subsystem.up();
+                Stage1Subsystem.close();
+                setArmState(1001);
+                break;
+            case 1001:
+                if (armTimer.getElapsedTime() > 1800) {
+                    setArmState(1002);
+                }
+                break;
+            case 1002:
+                Stage2Subsystem.setStage2(Stage2Subsystem.pickFromRack);
+                int start = Stage1Subsystem.BlindfoldReset(); //Ethan Slide pt.1
+                Stage1Subsystem.setExtPosBlind(500, .8, start); //Ethan Slide pt.2
+                Stage1Subsystem.setClawTwistPos(.625);
+                Stage1Subsystem.up();
+                setArmState(1003);
+                break;
+            case 1003:
+                if (armTimer.getElapsedTime() > 6000) {
+                    setArmState(1004);
+                }
+                break;
+            case 1004:
+                //FINAL ARM ADJUSTMENT FUNCTION
+                Stage2Subsystem.setStage2(Stage2Subsystem.readyClipVal);
+                setArmState(1005);
+                break;
+            case 1005:
+                //2 ARMS MEET FUNCTION
+                if (armTimer.getElapsedTime() < 1800) {
+                } else if (armTimer.getElapsedTime() < 2200) {
+                    //Stage1Subsystem.setPos(150); //210 Worked Sometimes
+                    Stage1Subsystem.closeMid();
+                } else {
+                    setArmState(1006);
+                }
+                break;
+            case 1006:
+                //CLIPPING FUNCTION
+                if (armTimer.getElapsedTime() < 1000) {
+                    Stage1Subsystem.setPos(150);
+                } else {
+                    Stage2Subsystem.setStage2(Stage2Subsystem.clipVal);
+                    Stage1Subsystem.closeTight();
+                    setArmState(1007);
+                }
+                break;
+            case 1007:
+                //RELEASE FUNCTION
+                if (armTimer.getElapsedTime() > 500) Stage1Subsystem.setClawWristPos(0);
+                if (armTimer.getElapsedTime() > 3000) {
+                    Stage1Subsystem.open();
+                    Stage1Subsystem.up();
+                    start = Stage1Subsystem.BlindfoldReset();
+                    Stage1Subsystem.setExtPosBlind(600, .8, start);
+                    setArmState(0);
+                }
+                break;
+            case 1008:
+                if (armTimer.getElapsedTime() < 1000) {Stage2Subsystem.readyScore();}
+                else if (armTimer.getElapsedTime() < 2000){
+                    Stage2Subsystem.score();
+                } else {
+                    Stage2Subsystem.score2();
+                    setArmState(0);
+                }
+                break;
+
+
+        }
+    }
+
+
+    void setAutonState(int num) {
+        autonState = num;
+        autonTimer.resetTimer();
+    }
+    void autonomousUpdate() {
+        switch (autonState) {
+            case 0:
+                break;
+            case 1:
+                setPathState(1);
+                //Stage2Subsystem.readyScore();
+                setAutonState(2);
+
+
+                break;
+            case 2:
+                if (pathState == 0) {
+                    setAutonState(3);
+                }
+                break;
+            case 3:
+                //setArmState(1008);
+
+                setAutonState(4);
+                break;
+            case 4:
+                if (armState == 0)
+                setAutonState(5);
+                break;
+            case 5:
+                setPathState(3);
+                setAutonState(6);
+                break;
+            case 6:
+                if (pathState == 0) {
+                    setAutonState(7);
+                }
+                break;
+            case 7:
+                setPathState(5);
+                setAutonState(8);
+                break;
+            case 8:
+                if (pathState == 0) {
+                    setAutonState(9);
+                }
+                break;
+            case(9) :
+                setPathState(7);
+                setAutonState(10);
+            case(10): break;
+
+        }
     }
 
         void buildPaths(){

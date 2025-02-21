@@ -206,12 +206,22 @@ public class Stage2Subsystem extends SubsystemBase {
     public static void clipPress() {setClipServoPos(.6);}
 
     public static void readyScore() {
-        Stage2Subsystem.setAngTarget(600);
-        Stage2Subsystem.setAngPower(.5);
-        Stage2Subsystem.setClawWristPos(0);
+        setAngTarget(500);
+        setAngPower(.5);
+
+        //Stage2Subsystem.setClawWristPos(0);
+
+    }
+    public static void readyScore2() {
+        setClawWristPos(1);
     }
     public static void score() {
+        setClawWristPos(0);
+    }
 
+    public static void score2() {
+        holdOpenMax();
+        setClawWristPos(1);
     }
 
 //    public static void setExtendPID(double pExtend, double iExtend, double dExtend){

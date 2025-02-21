@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -33,6 +34,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
     private static ColorSensor colorSensor = null;
     private static DistanceSensor distanceSensor = null;
+    public static TouchSensor touchSensor = null;
 
 
     private static int stage1State = 0;
@@ -79,6 +81,8 @@ public class Stage1Subsystem extends SubsystemBase {
     private static double clawWristPos = 0.6;
     private static double clawTwistPos = 0.625;
 
+    private static int extOffset = 0;
+
 
     private static final int extMin = 0;
     private static final int extMax = 2500;//(int) (ticks_in_inch * 42)-22;
@@ -101,6 +105,9 @@ public class Stage1Subsystem extends SubsystemBase {
 
         colorSensor = hMap.get(ColorSensor.class, "ColorSensor");
         distanceSensor = hMap.get(DistanceSensor.class, "ColorSensor");
+
+        touchSensor = hMap.get(TouchSensor.class, "TouchSensor");
+
 
 
 
@@ -146,6 +153,8 @@ public class Stage1Subsystem extends SubsystemBase {
     // ----------------
     public static void setPos(double ext) {extTarget = (int) ext; pidMoving = true; blindfold = false;}
     public static void setPosIN(double ext) {extTarget = (int) (ext * ticks_in_inch); pidMoving = true; blindfold = false;}
+
+    public static void resetOffset() {extOffset = getExtenderPos();    }
 
     //Shattuck's slide interpretation
     public static void setExtPow(double pow) {
@@ -263,7 +272,7 @@ public class Stage1Subsystem extends SubsystemBase {
 
     public static void update() {
         double extendPower;
-        extPos = extenderMotorLeft.getCurrentPosition();
+        extPos = extenderMotorLeft.getCurrentPosition() - extOffset;
 
         sampleProcessor.setColor(color);
 

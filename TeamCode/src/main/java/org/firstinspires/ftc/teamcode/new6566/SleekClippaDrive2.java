@@ -46,20 +46,20 @@ public class SleekClippaDrive2 extends OpMode {
 
 
         //Stage1Subsystem.setExtPosBlind(100,1,Stage1Subsystem.BlindfoldReset());
-        Stage2Subsystem.setAngTarget(1000);
-        Stage1Subsystem.close();
-        Stage1Subsystem.up();
-        Stage1Subsystem.setClawTwistPos(0.625);
-        Stage2Subsystem.setClipServoPos(.3);
-        Stage2Subsystem.setClawWristPos(0);
+//        Stage2Subsystem.setAngTarget(1000);
+//        Stage1Subsystem.close();
+//        Stage1Subsystem.up();
+//        Stage1Subsystem.setClawTwistPos(0.625);
+//        Stage2Subsystem.setClipServoPos(.3);
+//        Stage2Subsystem.setClawWristPos(0);
 
 
    }
 
    @Override
    public void init_loop() {
-       Stage2Subsystem.update();
-       Stage1Subsystem.update();
+//       Stage2Subsystem.update();
+//       Stage1Subsystem.update();
 
    }
 
@@ -73,6 +73,7 @@ public class SleekClippaDrive2 extends OpMode {
          */
 
         // Keep existing drive code unchanged
+        if (Stage1Subsystem.touchSensor.isPressed()) Stage1Subsystem.resetOffset();
 
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         //Extend or retract arm
@@ -132,7 +133,7 @@ public class SleekClippaDrive2 extends OpMode {
             setState(0);
         }
         if(gamepad2.b) {
-            setState(1004);
+            setState(1006);
         }
         if(gamepad2.dpad_left){
             Stage2Subsystem.raiseCams();}
@@ -203,8 +204,8 @@ public class SleekClippaDrive2 extends OpMode {
                 break;
             case 1002:
                 Stage2Subsystem.setStage2(Stage2Subsystem.pickFromRack);
-                int start = Stage1Subsystem.BlindfoldReset();
-                Stage1Subsystem.setExtPosBlind(500, .8, start);
+                int start = Stage1Subsystem.BlindfoldReset(); //Ethan Slide pt.1
+                Stage1Subsystem.setExtPosBlind(500, .8, start); //Ethan Slide pt.2
                 Stage1Subsystem.setClawTwistPos(.625);
                 Stage1Subsystem.up();
                 setState(1003);
@@ -215,25 +216,31 @@ public class SleekClippaDrive2 extends OpMode {
                 }
                 break;
             case 1004:
+                //FINAL ARM ADJUSTMENT FUNCTION
                 Stage2Subsystem.setStage2(Stage2Subsystem.readyClipVal);
                 setState(1005);
                 break;
             case 1005:
+                //2 ARMS MEET FUNCTION
                 if (timer.getElapsedTime() < 1800) {}
                 else if (timer.getElapsedTime() < 2200) {
-                    Stage1Subsystem.setPos(210);
+                    //Stage1Subsystem.setPos(150); //210 Worked Sometimes
                     Stage1Subsystem.closeMid();
                 }
                 else {
-                    setState(1006);
+                    setState(0);
                 }
                 break;
             case 1006:
-                Stage2Subsystem.setStage2(Stage2Subsystem.clipVal);
+                //CLIPPING FUNCTION
+                if (timer.getElapsedTime() < 1000) {Stage1Subsystem.setPos(150);}
+                else {
+                    Stage2Subsystem.setStage2(Stage2Subsystem.clipVal);
                 Stage1Subsystem.closeTight();
-                setState(1007);
+                setState(1007);}
                 break;
             case 1007:
+                //RELEASE FUNCTION
                 if (timer.getElapsedTime() > 500) Stage1Subsystem.setClawWristPos(0);
                 if (timer.getElapsedTime() > 3000) {
                     Stage1Subsystem.open();
@@ -243,6 +250,17 @@ public class SleekClippaDrive2 extends OpMode {
                     setState(0);
                 }
                 break;
+            case 1008:
+                if (timer.getElapsedTime() < 1000) {Stage2Subsystem.readyScore();}
+                else if (timer.getElapsedTime() < 2000){
+                    Stage2Subsystem.score();
+                } else {
+                    Stage2Subsystem.score2();
+                    setState(0);
+                }
+                break;
+
+
         }
     }
 
