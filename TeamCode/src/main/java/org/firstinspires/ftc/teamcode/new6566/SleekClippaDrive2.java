@@ -241,6 +241,7 @@ public class SleekClippaDrive2 extends OpMode {
                 break;
             case 1007:
                 //RELEASE FUNCTION
+                Stage1Subsystem.setPos(460);//Added in comp
                 if (timer.getElapsedTime() > 500) Stage1Subsystem.setClawWristPos(0);
                 if (timer.getElapsedTime() > 3000) {
                     Stage1Subsystem.open();
